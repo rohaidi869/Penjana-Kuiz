@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Penjana Kuiz Interaktif</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #3498db;
@@ -11,6 +12,7 @@
             --dark: #2c3e50;
             --light: #ecf0f1;
             --danger: #e74c3c;
+            --whatsapp: #25D366;
         }
         
         * {
@@ -19,116 +21,366 @@
         }
         
         body {
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
             margin: 0;
             padding: 20px;
             color: var(--dark);
+            min-height: 100vh;
         }
         
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 20px auto;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
         }
         
         h1 {
             color: var(--primary);
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1rem;
         }
         
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
         
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 42px;
+            color: #777;
         }
         
         input, select {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px 12px 12px 40px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
         
         button {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #1d6fa5);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 5px;
+            padding: 14px 30px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
             display: block;
-            margin: 30px auto;
-            transition: background 0.3s;
+            margin: 35px auto;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+            position: relative;
+            overflow: hidden;
         }
         
         button:hover {
-            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button.whatsapp-btn {
+            background: linear-gradient(135deg, var(--whatsapp), #128C7E);
+            box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button.whatsapp-btn:hover {
+            box-shadow: 0 7px 12px rgba(37, 211, 102, 0.3);
         }
         
         .output {
             background-color: var(--light);
-            border-radius: 5px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 25px;
             margin-top: 30px;
             white-space: pre-wrap;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             max-height: 400px;
             overflow-y: auto;
             display: none;
+            border: 1px dashed var(--primary);
+            position: relative;
+        }
+        
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .output-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         .copy-btn {
-            background-color: var(--secondary);
-            margin-top: 15px;
+            background: linear-gradient(135deg, var(--secondary), #27ae60);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .copy-btn:hover {
-            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .instructions {
+            background-color: #e3f2fd;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 25px 0;
+            font-size: 0.9rem;
+        }
+        
+        .whatsapp-section {
+            background-color: #e6ffeb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid var(--whatsapp);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 12px 25px;
+                font-size: 16px;
+                width: 100%;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .copy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            input, select {
+                padding: 12px 12px 12px 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .output {
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 Penjana Prompt Kuiz Interaktif</h1>
-        <p>Sila isi maklumat berikut untuk menjana prompt kuiz:</p>
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h1>Penjana Prompt Kuiz Interaktif</h1>
+            <p class="subtitle">Hasilkan kuiz interaktif untuk pelajar anda dalam beberapa langkah mudah</p>
+        </div>
         
-        <div class="form-group">
-            <label for="Kursus">1. Nama Kursus (cth: Teknologi Maklumat, Sejarah Islam):</label>
-            <input type="text" id="Kursus" required>
+        <div class="instructions">
+            <p><strong>Arahan Penggunaan:</strong></p>
+            <ol>
+                <li>Isi maklumat kuiz di bawah</li>
+                <li>Klik "Hasilkan Prompt Kuiz"</li>
+                <li>Salin prompt yang dihasilkan</li>
+                <li>Tampal ke ChatGPT atau AI lain untuk dapatkan kod HTML</li>
+                <li>Pelajar boleh hantar jawapan melalui WhatsApp</li>
+            </ol>
         </div>
         
         <div class="form-group">
-            <label for="jumlah">2. Bilangan soalan [default: 10]:</label>
+            <label for="Kursus"><i class="fas fa-book"></i> 1. Nama Kursus (cth: Teknologi Maklumat, Sejarah Islam):</label>
+            <div class="input-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <input type="text" id="Kursus" required placeholder="Masukkan nama kursus">
+        </div>
+        
+        <div class="form-group">
+            <label for="jumlah"><i class="fas fa-list-ol"></i> 2. Bilangan soalan [default: 10]:</label>
+            <div class="input-icon">
+                <i class="fas fa-list-ol"></i>
+            </div>
             <input type="number" id="jumlah" min="1" placeholder="10">
         </div>
         
         <div class="form-group">
-            <label for="bahasa">3. Bahasa antaramuka:</label>
+            <label for="bahasa"><i class="fas fa-language"></i> 3. Bahasa antaramuka:</label>
+            <div class="input-icon">
+                <i class="fas fa-language"></i>
+            </div>
             <select id="bahasa">
                 <option value="AR">Arab (AR)</option>
-                <option value="BM">Bahasa Melayu (BM)</option>
+                <option value="BM" selected>Bahasa Melayu (BM)</option>
                 <option value="BI">Bahasa Inggeris (BI)</option>
             </select>
         </div>
         
         <div class="form-group">
-            <label for="topik">4. Nama topik [default: sama seperti Kursus]:</label>
-            <input type="text" id="topik">
+            <label for="topik"><i class="fas fa-folder-open"></i> 4. Nama topik [default: sama seperti Kursus]:</label>
+            <div class="input-icon">
+                <i class="fas fa-folder-open"></i>
+            </div>
+            <input type="text" id="topik" placeholder="Masukkan nama topik (jika berbeza)">
         </div>
         
-        <button onclick="hasilkanPrompt()">Hasilkan Prompt Kuiz</button>
+        <div class="whatsapp-section">
+            <div class="form-group">
+                <label for="guru-phone"><i class="fab fa-whatsapp"></i> Nombor WhatsApp Guru (untuk terima jawapan):</label>
+                <div class="input-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <input type="tel" id="guru-phone" placeholder="Contoh: 60123456789">
+                <small>Format: 60xxxxxxxxx (tanpa '+' atau '-')</small>
+            </div>
+        </div>
         
-        <div id="output" class="output"></div>
+        <button onclick="hasilkanPrompt()">
+            <i class="fas fa-cogs"></i> Hasilkan Prompt Kuiz
+        </button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Menjana prompt kuiz...</p>
+        </div>
+        
+        <div id="output" class="output">
+            <div class="output-header">
+                <div class="output-title">PROMPT KUIZ SIAP DIGUNAKAN</div>
+            </div>
+            <div id="prompt-content"></div>
+            <div class="btn-group">
+                <button class="copy-btn" id="copy-btn">
+                    <i class="fas fa-copy"></i> Salin Prompt
+                </button>
+                <button class="copy-btn whatsapp-btn" id="whatsapp-btn" style="display:none;">
+                    <i class="fab fa-whatsapp"></i> Hantar ke WhatsApp
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -138,6 +390,17 @@
             let jumlah = document.getElementById('jumlah').value.trim();
             const bahasa = document.getElementById('bahasa').value;
             let topik = document.getElementById('topik').value.trim();
+            const guruPhone = document.getElementById('guru-phone').value.trim();
+            
+            // Validasi input wajib
+            if (!Kursus) {
+                alert("Sila masukkan nama kursus!");
+                document.getElementById('Kursus').focus();
+                return;
+            }
+            
+            // Tampilkan loading
+            document.getElementById('loading').style.display = 'block';
             
             // Jika jumlah kosong, guna 10
             if (jumlah === '') {
@@ -145,8 +408,8 @@
             }
             
             // Jika topik kosong, guna Kursus
-            if (Kursus === '') {
-                Kursus = topik;
+            if (topik === '') {
+                topik = Kursus;
             }
             
             // Peta kod bahasa
@@ -156,20 +419,23 @@
                 "BI": "Bahasa Inggeris"
             };
             
+            // Format nombor WhatsApp
+            const formattedPhone = guruPhone ? `60${guruPhone.replace(/^60/, '')}` : '';
+            
             // Bina prompt
-            let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi Kursus yang diberikan berdasarkan dokumen lampiran. Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
+            let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
 
-**Spesifikasi:**
+**SPESIFIKASI KUIZ:**
 - Kursus: ${Kursus}
-- topik: ${topik}
+- Topik: ${topik}
 - Bahasa: ${bahasaMap[bahasa]}
-- Soalan: ${jumlah}
+- Bilangan Soalan: ${jumlah}
 - Format: Pilihan berganda (4 pilihan)
 
-**Struktur Wajib:**
+**KEHENDAK FUNGSI:**
 1. HTML lengkap dengan CSS dan JavaScript
 2. Tiga halaman:
-   - Halaman Mula (input nama)
+   - Halaman Mula (input nama pelajar)
    - Halaman Kuiz (soalan & jawapan)
    - Halaman Sijil (paparan gred)
 3. Fungsi JavaScript:
@@ -177,8 +443,20 @@
    - startQuiz(), loadQuestion(), checkAnswer()
    - navigasi soalan (sebelum/seterus)
    - sistem gred automatik
+   - fungsi hantar melalui WhatsApp
 
-**Contoh quizData:**
+**FUNGSI WHATSAPP:**
+- Tambah butang "Hantar Jawapan" di halaman sijil
+- Butang ini akan membuka WhatsApp dengan nombor guru: ${formattedPhone || '[NOMBOR GURU]'}
+- Mesej WhatsApp mengandungi:
+  Nama Pelajar: [nama]
+  Kursus: ${Kursus}
+  Topik: ${topik}
+  Skor: [skor]/[jumlah soalan]
+  Gred: [gred]
+  Tarikh: [tarikh selesai]
+
+**CONTOH QUIZDATA:**
 \`\`\`javascript
 const quizData = [
   {
@@ -191,35 +469,81 @@ const quizData = [
 ];
 \`\`\`
 
-**Sistem Gred:**
+**SISTEM GRED:**
 - 90-100%: ممتاز/Cemerlang/Excellent
 - 70-89%: جيد جدا/Sangat Baik/Very Good
 - 50-69%: مقبول/Lulus/Pass
 - <50%: يحتاج مراجعة/Perlu Semakan/Needs Review
 
-**Arahan Tambahan:**
+**ARAHAN TAMBAHAN:**
 1. Pastikan UI responsif menggunakan CSS Flexbox/Grid
 2. Gunakan font Google 'Cairo' untuk semua teks
 3. Tambahkan efek hover pada butang
-4. Sertakan komen dalam kod untuk penjelasan fungsi penting`;
+4. Sertakan komen dalam kod untuk penjelasan fungsi penting
+5. Tambahkan fungsi hantar melalui WhatsApp seperti yang ditetapkan`;
 
-            // Paparkan output
-            const outputDiv = document.getElementById('output');
-            outputDiv.textContent = prompt;
-            outputDiv.style.display = 'block';
-            
-            // Tambah butang salin
-            const copyBtn = document.createElement('button');
-            copyBtn.textContent = 'Salin Prompt';
-            copyBtn.className = 'copy-btn';
-            copyBtn.onclick = () => {
-                navigator.clipboard.writeText(prompt)
-                    .then(() => alert('Prompt telah disalin!'))
-                    .catch(err => console.error('Gagal menyalin: ', err));
-            };
-            
-            outputDiv.appendChild(copyBtn);
+            // Paparkan output setelah 1.5s (simulasi proses)
+            setTimeout(() => {
+                const promptContent = document.getElementById('prompt-content');
+                promptContent.textContent = prompt;
+                
+                const outputDiv = document.getElementById('output');
+                outputDiv.style.display = 'block';
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                // Tampilkan butang WhatsApp jika nombor diisi
+                if (formattedPhone) {
+                    document.getElementById('whatsapp-btn').style.display = 'flex';
+                }
+            }, 1500);
         }
+        
+        // Fungsi untuk menyalin prompt
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            const promptContent = document.getElementById('prompt-content').textContent;
+            navigator.clipboard.writeText(promptContent)
+                .then(() => {
+                    alert('Prompt telah disalin ke clipboard!');
+                })
+                .catch(err => {
+                    console.error('Gagal menyalin: ', err);
+                    alert('Gagal menyalin. Sila cuba lagi.');
+                });
+        });
+        
+        // Fungsi untuk hantar melalui WhatsApp
+        document.getElementById('whatsapp-btn').addEventListener('click', () => {
+            const guruPhone = document.getElementById('guru-phone').value.trim();
+            const Kursus = document.getElementById('Kursus').value.trim();
+            
+            if (!guruPhone) {
+                alert("Sila masukkan nombor WhatsApp guru terlebih dahulu!");
+                return;
+            }
+            
+            const formattedPhone = `60${guruPhone.replace(/^60/, '')}`;
+            const promptContent = document.getElementById('prompt-content').textContent;
+            
+            const whatsappMessage = encodeURIComponent(
+                `*Permintaan Penjana Kuiz*\n\n` +
+                `Kursus: ${Kursus}\n` +
+                `Prompt Kuiz telah dijana. Sila lihat di bawah:\n\n${promptContent}`
+            );
+            
+            const whatsappUrl = `https://wa.me/${formattedPhone}?text=${whatsappMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+        });
+        
+        // Format automatik untuk input telefon
+        document.getElementById('guru-phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('60')) {
+                value = value.substring(2);
+            }
+            e.target.value = value;
+        });
     </script>
 </body>
 </html>
