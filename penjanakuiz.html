@@ -103,7 +103,7 @@
         <p>Sila isi maklumat berikut untuk menjana prompt kuiz:</p>
         
         <div class="form-group">
-            <label for="Kursus">1. Kursus kuiz (cth: Teknologi Maklumat, Sejarah Islam):</label>
+            <label for="Kursus">1. Nama Kursus (cth: Teknologi Maklumat, Sejarah Islam):</label>
             <input type="text" id="Kursus" required>
         </div>
         
@@ -157,7 +157,7 @@
             };
             
             // Bina prompt
-            let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
+            let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi Kursus yang diberikan berdasarkan dokumen lampiran. Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
 
 **Spesifikasi:**
 - Kursus: ${Kursus}
