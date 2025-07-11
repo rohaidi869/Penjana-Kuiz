@@ -103,8 +103,8 @@
         <p>Sila isi maklumat berikut untuk menjana prompt kuiz:</p>
         
         <div class="form-group">
-            <label for="topik">1. Topik kuiz (cth: Teknologi Maklumat, Sejarah Islam):</label>
-            <input type="text" id="topik" required>
+            <label for="Kursus">1. Kursus kuiz (cth: Teknologi Maklumat, Sejarah Islam):</label>
+            <input type="text" id="Kursus" required>
         </div>
         
         <div class="form-group">
@@ -122,8 +122,8 @@
         </div>
         
         <div class="form-group">
-            <label for="pelajaran">4. Nama pelajaran/subjek [default: sama seperti topik]:</label>
-            <input type="text" id="pelajaran">
+            <label for="topik">4. Nama topik [default: sama seperti Kursus]:</label>
+            <input type="text" id="topik">
         </div>
         
         <button onclick="hasilkanPrompt()">Hasilkan Prompt Kuiz</button>
@@ -134,19 +134,19 @@
     <script>
         function hasilkanPrompt() {
             // Dapatkan nilai input
-            const topik = document.getElementById('topik').value.trim();
+            const Kursus = document.getElementById('Kursus').value.trim();
             let jumlah = document.getElementById('jumlah').value.trim();
             const bahasa = document.getElementById('bahasa').value;
-            let pelajaran = document.getElementById('pelajaran').value.trim();
+            let topik = document.getElementById('topik').value.trim();
             
             // Jika jumlah kosong, guna 10
             if (jumlah === '') {
                 jumlah = '10';
             }
             
-            // Jika pelajaran kosong, guna topik
-            if (pelajaran === '') {
-                pelajaran = topik;
+            // Jika topik kosong, guna Kursus
+            if (Kursus === '') {
+                Kursus = topik;
             }
             
             // Peta kod bahasa
@@ -157,11 +157,11 @@
             };
             
             // Bina prompt
-            let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi pelajaran yang diberikan. Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
+            let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
 
 **Spesifikasi:**
-- Topik: ${topik}
-- Pelajaran: ${pelajaran}
+- Kursus: ${Kursus}
+- topik: ${topik}
 - Bahasa: ${bahasaMap[bahasa]}
 - Soalan: ${jumlah}
 - Format: Pilihan berganda (4 pilihan)
