@@ -353,8 +353,8 @@
                 <div class="input-icon">
                     <i class="fas fa-phone"></i>
                 </div>
-                <input type="tel" id="guru-phone" placeholder="Contoh: 60123456789">
-                <small>Format: 60xxxxxxxxx (tanpa '+' atau '-')</small>
+                <input type="tel" id="guru-phone" placeholder="Contoh: 123456789">
+                <small>Format: tanpa '60' atau '+' (cth: 123456789)</small>
             </div>
         </div>
         
@@ -376,12 +376,23 @@
                 <button class="copy-btn" id="copy-btn">
                     <i class="fas fa-copy"></i> Salin Prompt
                 </button>
-                </div>
+                <button class="copy-btn whatsapp-btn" id="whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> Hantar via WhatsApp
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
+        // Fungsi untuk memainkan bunyi klik
+        function playClickSound() {
+            const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
+            audio.play().catch(() => {});
+        }
+
         function hasilkanPrompt() {
+            playClickSound();
+            
             // Dapatkan nilai input
             const Kursus = document.getElementById('Kursus').value.trim();
             let jumlah = document.getElementById('jumlah').value.trim();
@@ -416,10 +427,10 @@
                 "BI": "Bahasa Inggeris"
             };
             
-            // Format nombor WhatsApp
-            const formattedPhone = guruPhone ? `60${guruPhone.replace(/^60/, '')}` : '';
+            // Format nombor WhatsApp (tanpa prefix)
+            const formattedPhone = guruPhone;
             
-            // Bina prompt
+            // Bina prompt dengan arahan jelas untuk bunyi klik
             let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi Kursus yang diberikan sebagaimana dokumen lampiran (sekiranya ada). Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
 
 **SPESIFIKASI KUIZ:**
@@ -441,10 +452,11 @@
    - navigasi soalan (sebelum/seterus)
    - sistem gred automatik
    - fungsi hantar melalui WhatsApp
+   - Mainkan bunyi klik setiap kali pelajar memilih jawapan
 
 **FUNGSI WHATSAPP:**
 - Tambah butang "Hantar Jawapan" di halaman sijil
-- Butang ini akan membuka WhatsApp dengan nombor guru: ${formattedPhone || '[NOMBOR GURU]'}
+- Butang ini akan membuka WhatsApp dengan nombor guru: 60${formattedPhone || '[NOMBOR GURU]'}
 - Mesej WhatsApp mengandungi:
   Nama Pelajar: [nama]
   Kursus: ${Kursus}
@@ -452,6 +464,20 @@
   Skor: [skor]/[jumlah soalan]
   Gred: [gred]
   Tarikh: [tarikh selesai]
+
+**TAMBAHAN PENTING:**
+// SERTAKAN FUNGSI INI DALAM JAVASCRIPT KUIZ
+function playClickSound() {
+    const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
+    audio.play().catch(() => {});
+}
+
+// PANGGIL FUNGSI BUNYI DALAM FUNGSI CHECKANSWER
+function checkAnswer(selectedOption) {
+    playClickSound(); // <-- MAINKAN BUNYI KLIK DI SINI
+    
+    // ... kod semakan jawapan ...
+}
 
 **CONTOH QUIZDATA:**
 \`\`\`javascript
@@ -477,7 +503,8 @@ const quizData = [
 2. Gunakan font Google 'Cairo' untuk semua teks
 3. Tambahkan efek hover pada butang
 4. Sertakan komen dalam kod untuk penjelasan fungsi penting
-5. Tambahkan fungsi hantar melalui WhatsApp seperti yang ditetapkan`;
+5. Tambahkan fungsi hantar melalui WhatsApp seperti yang ditetapkan
+6. Pastikan fungsi playClickSound() dipanggil setiap kali pengguna memilih jawapan`;
 
             // Paparkan output setelah 1.5s (simulasi proses)
             setTimeout(() => {
@@ -498,6 +525,7 @@ const quizData = [
         
         // Fungsi untuk menyalin prompt
         document.getElementById('copy-btn').addEventListener('click', () => {
+            playClickSound();
             const promptContent = document.getElementById('prompt-content').textContent;
             navigator.clipboard.writeText(promptContent)
                 .then(() => {
@@ -511,6 +539,7 @@ const quizData = [
         
         // Fungsi untuk hantar melalui WhatsApp
         document.getElementById('whatsapp-btn').addEventListener('click', () => {
+            playClickSound();
             const guruPhone = document.getElementById('guru-phone').value.trim();
             const Kursus = document.getElementById('Kursus').value.trim();
             
@@ -519,7 +548,7 @@ const quizData = [
                 return;
             }
             
-            const formattedPhone = `60${guruPhone.replace(/^60/, '')}`;
+            const formattedPhone = `60${guruPhone}`;
             const promptContent = document.getElementById('prompt-content').textContent;
             
             const whatsappMessage = encodeURIComponent(
@@ -533,13 +562,9 @@ const quizData = [
             window.open(whatsappUrl, '_blank');
         });
         
-        // Format automatik untuk input telefon
+        // Format automatik untuk input telefon (hanya angka)
         document.getElementById('guru-phone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.startsWith('60')) {
-                value = value.substring(2);
-            }
-            e.target.value = value;
+            e.target.value = e.target.value.replace(/\D/g, '');
         });
     </script>
 </body>
