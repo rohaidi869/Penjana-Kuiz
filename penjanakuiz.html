@@ -444,11 +444,12 @@
 - Bahasa: ${bahasaMap[bahasa]}
 - Bilangan Soalan: ${jumlah}
 - Format: Pilihan berganda (4 pilihan)
+- Penjelasan jawapan selalu ditampilkan setelah jawapan dipilih
 
 **KEHENDAK FUNGSI:**
 1. HTML lengkap dengan CSS dan JavaScript
 2. Tiga halaman:
-   - Halaman Mula (input nama pelajar)
+   - Halaman Mula (input nama pelajar) & Arahan menjawab
    - Halaman Kuiz (soalan & jawapan)
    - Halaman Sijil (paparan gred)
 3. Fungsi JavaScript:
@@ -506,7 +507,7 @@ const quizData = [
 
 **ARAHAN TAMBAHAN:**
 1. Pastikan UI responsif menggunakan CSS Flexbox/Grid
-2. Gunakan font Google 'Cairo' untuk semua teks
+2. Gunakan font Google 'Sofia' untuk semua teks
 3. Tambahkan efek hover pada butang
 4. Sertakan komen dalam kod untuk penjelasan fungsi penting
 5. Tambahkan fungsi hantar melalui WhatsApp seperti yang ditetapkan
@@ -550,12 +551,7 @@ const quizData = [
             const guruPhone = document.getElementById('guru-phone').value.trim();
             const Kursus = document.getElementById('Kursus').value.trim();
 
-            if (!guruPhone) {
-                alert("Sila masukkan nombor WhatsApp guru terlebih dahulu!");
-                return;
-            }
-
-            const formattedPhone = `60${guruPhone}`;
+           const formattedPhone = `60${guruPhone}`;
             const promptContent = document.getElementById('prompt-content').textContent;
 
             const whatsappMessage = encodeURIComponent(
