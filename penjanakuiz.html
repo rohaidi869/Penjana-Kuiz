@@ -16,12 +16,12 @@
             --whatsapp: #25D366;
         }
 
-        * {
+* {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        body {
+body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
             margin: 0;
             padding: 20px;
@@ -29,7 +29,7 @@
             min-height: 100vh;
         }
 
-        .container {
+.container {
             max-width: 800px;
             margin: 20px auto;
             background: white;
@@ -40,7 +40,7 @@
             overflow: hidden;
         }
 
-        .container::before {
+.container::before {
             content: "";
             position: absolute;
             top: 0;
@@ -50,51 +50,51 @@
             background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
-        .header {
+.header {
             text-align: center;
             margin-bottom: 25px;
         }
 
-        .logo {
+.logo {
             font-size: 2.5rem;
             color: var(--primary);
             margin-bottom: 10px;
         }
 
-        h1 {
+h1 {
             color: var(--primary);
             text-align: center;
             margin-bottom: 15px;
             font-size: 1.8rem;
         }
 
-        .subtitle {
+.subtitle {
             text-align: center;
             color: #666;
             margin-bottom: 25px;
             font-size: 1rem;
         }
 
-        .form-group {
+.form-group {
             margin-bottom: 20px;
             position: relative;
         }
 
-        label {
+label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: var(--dark);
         }
 
-        .input-icon {
+.input-icon {
             position: absolute;
             left: 15px;
             top: 42px;
             color: #777;
         }
 
-        input, select {
+input, select {
             width: 100%;
             padding: 12px 12px 12px 40px;
             border: 2px solid #ddd;
@@ -103,13 +103,13 @@
             transition: border-color 0.3s;
         }
 
-        input:focus, select:focus {
+input:focus, select:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
 
-        button {
+button {
             background: linear-gradient(135deg, var(--primary), #1d6fa5);
             color: white;
             border: none;
@@ -126,16 +126,16 @@
             overflow: hidden;
         }
 
-        button:hover {
+button:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 12px rgba(52, 152, 219, 0.3);
         }
 
-        button:active {
+button:active {
             transform: translateY(1px);
         }
 
-        button.whatsapp-btn {
+button.whatsapp-btn {
             background: linear-gradient(135deg, var(--whatsapp), #128C7E);
             box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2);
             display: inline-flex;
@@ -144,11 +144,11 @@
             gap: 10px;
         }
 
-        button.whatsapp-btn:hover {
+button.whatsapp-btn:hover {
             box-shadow: 0 7px 12px rgba(37, 211, 102, 0.3);
         }
 
-        .output {
+.output {
             background-color: var(--light);
             border-radius: 10px;
             padding: 25px;
@@ -162,7 +162,7 @@
             position: relative;
         }
 
-        .output-header {
+.output-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -171,13 +171,13 @@
             border-bottom: 1px solid #ddd;
         }
 
-        .output-title {
+.output-title {
             font-weight: 700;
             color: var(--primary);
             font-size: 1.2rem;
         }
 
-        .btn-group {
+.btn-group {
             display: flex;
             gap: 10px;
             justify-content: center;
@@ -185,7 +185,7 @@
             flex-wrap: wrap;
         }
 
-        .copy-btn {
+.copy-btn {
             background: linear-gradient(135deg, var(--secondary), #27ae60);
             color: white;
             border: none;
@@ -199,18 +199,18 @@
             gap: 5px;
         }
 
-        .copy-btn:hover {
+.copy-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
         }
 
-        .loading {
+.loading {
             display: none;
             text-align: center;
             padding: 20px;
         }
 
-        .spinner {
+.spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-left-color: var(--primary);
             border-radius: 50%;
@@ -220,11 +220,11 @@
             margin: 0 auto 15px;
         }
 
-        @keyframes spin {
+@keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        .instructions {
+.instructions {
             background-color: #e3f2fd;
             border-left: 4px solid var(--primary);
             padding: 15px;
@@ -233,7 +233,7 @@
             font-size: 0.9rem;
         }
 
-        .whatsapp-section {
+.whatsapp-section {
             background-color: #e6ffeb;
             padding: 15px;
             border-radius: 8px;
@@ -241,51 +241,51 @@
             border-left: 4px solid var(--whatsapp);
         }
 
-        /* Responsive Design */
+/* Responsive Design */
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
                 margin: 10px;
             }
 
-            h1 {
+h1 {
                 font-size: 1.5rem;
             }
 
-            button {
+button {
                 padding: 12px 25px;
                 font-size: 16px;
                 width: 100%;
             }
 
-            .btn-group {
+.btn-group {
                 flex-direction: column;
             }
 
-            .copy-btn {
+.copy-btn {
                 width: 100%;
                 justify-content: center;
             }
 
-            input, select {
+input, select {
                 padding: 12px 12px 12px 40px;
             }
         }
 
-        @media (max-width: 480px) {
+@media (max-width: 480px) {
             body {
                 padding: 10px;
             }
 
-            .container {
+.container {
                 padding: 15px;
             }
 
-            .output {
+.output {
                 padding: 15px;
             }
 
-            .logo {
+.logo {
                 font-size: 2rem;
             }
         }
@@ -301,7 +301,7 @@
             <p class="subtitle">Hasilkan kuiz interaktif untuk pelajar anda dalam beberapa langkah mudah</p>
         </div>
 
-        <div class="instructions">
+<div class="instructions">
             <p><strong>Arahan Penggunaan:</strong></p>
             <ol>
                 <li>Isi maklumat kuiz di bawah</li>
@@ -312,7 +312,7 @@
             </ol>
         </div>
 
-        <div class="form-group">
+<div class="form-group">
             <label for="Kursus"><i class="fas fa-book"></i> 1. Nama Kursus (cth: Teknologi Maklumat, Sejarah Islam):</label>
             <div class="input-icon">
                 <i class="fas fa-book"></i>
@@ -320,7 +320,7 @@
             <input type="text" id="Kursus" required placeholder="Masukkan nama kursus">
         </div>
 
-        <div class="form-group">
+<div class="form-group">
             <label for="jumlah"><i class="fas fa-list-ol"></i> 2. Bilangan soalan [default: 10]:</label>
             <div class="input-icon">
                 <i class="fas fa-list-ol"></i>
@@ -328,7 +328,7 @@
             <input type="number" id="jumlah" min="1" placeholder="10">
         </div>
 
-        <div class="form-group">
+<div class="form-group">
             <label for="bahasa"><i class="fas fa-language"></i> 3. Bahasa antaramuka:</label>
             <div class="input-icon">
                 <i class="fas fa-language"></i>
@@ -340,7 +340,7 @@
             </select>
         </div>
 
-        <div class="form-group">
+<div class="form-group">
             <label for="topik"><i class="fas fa-folder-open"></i> 4. Nama topik [default: sama seperti Kursus]:</label>
             <div class="input-icon">
                 <i class="fas fa-folder-open"></i>
@@ -348,7 +348,7 @@
             <input type="text" id="topik" placeholder="Masukkan nama topik (jika berbeza)">
         </div>
 
-        <div class="whatsapp-section">
+<div class="whatsapp-section">
             <div class="form-group">
                 <label for="guru-phone"><i class="fab fa-whatsapp"></i> Nombor WhatsApp Guru (untuk terima jawapan):</label>
                 <div class="input-icon">
@@ -359,16 +359,16 @@
             </div>
         </div>
 
-        <button onclick="hasilkanPrompt()">
+<button onclick="hasilkanPrompt()">
             <i class="fas fa-cogs"></i> Hasilkan Prompt Kuiz
         </button>
 
-        <div class="loading" id="loading">
+<div class="loading" id="loading">
             <div class="spinner"></div>
             <p>Menjana prompt kuiz...</p>
         </div>
 
-        <div id="output" class="output">
+<div id="output" class="output">
             <div class="output-header">
                 <div class="output-title">PROMPT KUIZ SIAP DIGUNAKAN</div>
             </div>
@@ -377,63 +377,66 @@
                 <button class="copy-btn" id="copy-btn">
                     <i class="fas fa-copy"></i> Salin Prompt
                 </button>
-                </div>
+                <button class="copy-btn whatsapp-btn" id="whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> Hantar via WhatsApp
+                </button>
+            </div>
         </div>
 
-        <div style="text-align: center; margin-top: 30px; font-size: 0.8rem; color: #666;">
-            hak cipta terpelihara &copy; 2025 almasalc
+<div style="text-align: center; margin-top: 30px; font-size: 0.8rem; color: #666;">
+            hak cipta terpelihara © 2025 almasalc
         </div>
     </div>
 
-    <script>
+<script>
         // Fungsi untuk memainkan bunyi klik
         function playClickSound() {
             const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
             audio.play().catch(() => {});
         }
 
-        function hasilkanPrompt() {
+function hasilkanPrompt() {
             playClickSound();
 
-            // Dapatkan nilai input
+// Dapatkan nilai input
             const Kursus = document.getElementById('Kursus').value.trim();
             let jumlah = document.getElementById('jumlah').value.trim();
             const bahasa = document.getElementById('bahasa').value;
             let topik = document.getElementById('topik').value.trim();
             const guruPhone = document.getElementById('guru-phone').value.trim();
 
-            // Validasi input wajib
+// Validasi input wajib
             if (!Kursus) {
                 alert("Sila masukkan nama kursus!");
                 document.getElementById('Kursus').focus();
                 return;
             }
 
-            // Tampilkan loading
+// Tampilkan loading
             document.getElementById('loading').style.display = 'block';
 
-            // Jika jumlah kosong, guna 10
+// Jika jumlah kosong, guna 10
             if (jumlah === '') {
                 jumlah = '10';
             }
 
-            // Jika topik kosong, guna Kursus
+// Jika topik kosong, guna Kursus
             if (topik === '') {
                 topik = Kursus;
             }
 
-            // Peta kod bahasa
+// Peta kod bahasa
             const bahasaMap = {
                 "AR": "Arab",
                 "BM": "Bahasa Melayu",
                 "BI": "Bahasa Inggeris"
             };
 
-            // Format nombor WhatsApp (tanpa prefix)
+// Format nombor WhatsApp (tanpa prefix)
             const formattedPhone = guruPhone;
 
-            // Bina prompt dengan arahan jelas untuk bunyi klik
-            let prompt = `Anda adalah seorang pakar dalam mencipta kuiz interaktif berdasarkan topik bagi Kursus yang diberikan sebagaimana dokumen lampiran (sekiranya ada). Tugasan anda adalah untuk menghasilkan kod HTML lengkap untuk kuiz interaktif. 
+// Bina prompt dengan arahan jelas untuk bunyi klik
+            let prompt = `Anda adalah seorang pembangun berpengalaman dalam mencipta sistem kuiz interaktif berasaskan web. Tugas anda ialah membangunkan dan menghasilkan kod HTML lengkap (termasuk CSS dan JavaScript) bagi kuiz interaktif berdasarkan topik bagi Kursus yang diberikan sepertimana dokumen lampiran (sekiranya ada). Kuiz ini bertujuan menilai kefahaman pelajar terhadap topik yang diberi melalui soalan pelbagai aras kesukaran (fakta, aplikasi, analisis), dan menyediakan maklum balas serta gred automatik. Pelajar akan menghantar keputusan mereka kepada pensyarah melalui WhatsApp atau Google Sheet. 
 
 **SPESIFIKASI KUIZ:**
 - Kursus: ${Kursus}
@@ -441,13 +444,12 @@
 - Bahasa: ${bahasaMap[bahasa]}
 - Bilangan Soalan: ${jumlah}
 - Format: Pilihan berganda (4 pilihan)
-- Penjelasan jawapan selalu ditampilkan setelah jawapan dipilih
 
 **KEHENDAK FUNGSI:**
 1. HTML lengkap dengan CSS dan JavaScript
 2. Tiga halaman:
-   - Halaman Mula (input nama pelajar) & Arahan menjawab
-   - Halaman Kuiz (soalan & jawapan)
+   - Halaman Mula (input nama pelajar)
+   - Halaman Kuiz (soalan, jawapan dan Keterangan jawapan)
    - Halaman Sijil (paparan gred)
 3. Fungsi JavaScript:
    - quizData = array objek soalan
@@ -472,15 +474,98 @@
 **TAMBAHAN PENTING:**
 // SERTAKAN FUNGSI INI DALAM JAVASCRIPT KUIZ
 function playClickSound() {
-    const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
-    audio.play().catch(() => {});
-}
+      const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
+      audio.play().catch(() => {});
+    }
+    function playCorrectSound() {
+      const audio = new Audio('https://freesound.org/data/previews/320/320181_5260875-lq.mp3');
+      audio.play().catch(() => {});
+    }
+    function playWrongSound() {
+      const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3');
+      audio.play().catch(() => {});
+    }
 
-// PANGGIL FUNGSI BUNYI DALAM FUNGSI CHECKANSWER
+    function startQuiz() {
+      studentName = document.getElementById('studentName').value;
+      if (!studentName) return alert("Sila masukkan nama anda");
+      document.getElementById('start-container').style.display = 'none';
+      document.getElementById('quiz-container').style.display = 'block';
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      document.getElementById('question').innerText = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      document.getElementById('explanation').innerText = '';
+      q.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.innerText = option;
+        btn.onclick = () => checkAnswer(option);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      playClickSound();
+      const q = quizData[currentQuestion];
+      const isCorrect = selected === q.answer;
+      document.getElementById('explanation').innerText = q.explanation;
+      if (isCorrect) {
+        score++;
+        playCorrectSound();
+      } else {
+        playWrongSound();
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < quizData.length - 1) {
+        currentQuestion++;
+        loadQuestion();
+      } else {
+        endQuiz();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        loadQuestion();
+      }
+    }
+
+    function endQuiz() {
+      document.getElementById('quiz-container').style.display = 'none';
+      document.getElementById('certificate').style.display = 'block';
+      document.getElementById('certName').innerText = studentName;
+      document.getElementById('scoreDisplay').innerText = `${score}/${quizData.length}`;
+      const percent = (score / quizData.length) * 100;
+      let grade, motivasi;
+      if (percent >= 90) {
+        grade = "Cemerlang";
+        motivasi = "Tahniah! Anda menunjukkan penguasaan yang sangat baik!";
+      } else if (percent >= 70) {
+        grade = "Sangat Baik";
+        motivasi = "Teruskan usaha anda. Pencapaian anda sangat membanggakan!";
+      } else if (percent >= 50) {
+        grade = "Lulus";
+        motivasi = "Anda lulus, tetapi masih ada ruang untuk penambahbaikan.";
+      } else {
+        grade = "Perlu Semakan";
+        motivasi = "Jangan putus asa! Teruskan ulang kaji dan cuba lagi.";
+      }
+      document.getElementById('grade').innerText = grade;
+      document.getElementById('motivasi').innerText = motivasi;
+    }
+
+    // PANGGIL FUNGSI BUNYI DALAM FUNGSI CHECKANSWER
 function checkAnswer(selectedOption) {
     playClickSound(); // <-- MAINKAN BUNYI KLIK DI SINI
 
-    // ... kod semakan jawapan ...
+// ... kod semakan jawapan ...
 }
 
 **CONTOH QUIZDATA:**
@@ -497,38 +582,39 @@ const quizData = [
 \`\`\`
 
 **SISTEM GRED:**
-- 90-100%: ممتاز/Cemerlang/Excellent
-- 70-89%: جيد جدا/Sangat Baik/Very Good
-- 50-69%: مقبول/Lulus/Pass
-- <50%: يحتاج إلى المراجعة/Perlu Semakan/Needs Review
+- 90–100%: ممتاز / Cemerlang / Excellent → "Tahniah! Anda menunjukkan penguasaan yang sangat baik!"
+- 70–89%: جيد جدا / Sangat Baik / Very Good → "Teruskan usaha anda. Pencapaian anda sangat membanggakan!"
+- 50–69%: مقبول / Lulus / Pass → "Anda lulus, tetapi masih ada ruang untuk penambahbaikan."
+- <50%: يحتاج إلى المراجعة / Perlu Semakan / Needs Review → "Jangan putus asa! Teruskan ulang kaji dan cuba lagi."
 
 **ARAHAN TAMBAHAN:**
 1. Pastikan UI responsif menggunakan CSS Flexbox/Grid
-2. Gunakan font Google 'Sofia' untuk semua teks
+2. Gunakan font Google 'Cairo' untuk semua teks
 3. Tambahkan efek hover pada butang
 4. Sertakan komen dalam kod untuk penjelasan fungsi penting
-5. Tambahkan fungsi hantar melalui WhatsApp seperti yang ditetapkan
+5. Tambahkan fungsi hantar melalui WhatsApp dan Google Sheet seperti yang ditetapkan
 6. Pastikan paparan jawapan yang betul dan keterangan bagi jawapan yang betul akan dipaparkan di bawah pilihan jawapan sebelum pelajar berpindah ke soalan seterusnya
-7. Pastikan fungsi playClickSound() dipanggil setiap kali pengguna memilih jawapan`;
+7. Fungsi bunyi mesti dipanggil setiap kali pelajar klik mana-mana pilihan
+8. ;
 
-            // Paparkan output setelah 1.5s (simulasi proses)
+// Paparkan output setelah 1.5s (simulasi proses)
             setTimeout(() => {
                 const promptContent = document.getElementById('prompt-content');
                 promptContent.textContent = prompt;
 
-                const outputDiv = document.getElementById('output');
+const outputDiv = document.getElementById('output');
                 outputDiv.style.display = 'block';
 
-                document.getElementById('loading').style.display = 'none';
+document.getElementById('loading').style.display = 'none';
 
-                // Tampilkan butang WhatsApp jika nombor diisi
+// Tampilkan butang WhatsApp jika nombor diisi
                 if (formattedPhone) {
                     document.getElementById('whatsapp-btn').style.display = 'flex';
                 }
             }, 1500);
         }
 
-        // Fungsi untuk menyalin prompt
+// Fungsi untuk menyalin prompt
         document.getElementById('copy-btn').addEventListener('click', () => {
             playClickSound();
             const promptContent = document.getElementById('prompt-content').textContent;
@@ -542,30 +628,51 @@ const quizData = [
                 });
         });
 
-        // Fungsi untuk hantar melalui WhatsApp
+// Fungsi untuk hantar melalui WhatsApp
         document.getElementById('whatsapp-btn').addEventListener('click', () => {
             playClickSound();
             const guruPhone = document.getElementById('guru-phone').value.trim();
             const Kursus = document.getElementById('Kursus').value.trim();
 
-           const formattedPhone = `60${guruPhone}`;
+if (!guruPhone) {
+                alert("Sila masukkan nombor WhatsApp guru terlebih dahulu!");
+                return;
+            }
+
+const formattedPhone = `60${guruPhone}`;
             const promptContent = document.getElementById('prompt-content').textContent;
 
-            const whatsappMessage = encodeURIComponent(
+const whatsappMessage = encodeURIComponent(
                 `*Permintaan Penjana Kuiz*\n\n` +
                 `Kursus: ${Kursus}\n` +
                 `Prompt Kuiz telah dijana. Sila lihat di bawah:\n\n${promptContent}`
             );
 
-            const whatsappUrl = `https://wa.me/${formattedPhone}?text=${whatsappMessage}`;
+const whatsappUrl = `https://wa.me/${formattedPhone}?text=${whatsappMessage}`;
 
-            window.open(whatsappUrl, '_blank');
+window.open(whatsappUrl, '_blank');
         });
 
-        // Format automatik untuk input telefon (hanya angka)
+// Format automatik untuk input telefon (hanya angka)
         document.getElementById('guru-phone').addEventListener('input', function(e) {
             e.target.value = e.target.value.replace(/\D/g, '');
         });
+
+    // Fungsi untuk hantar melalui Google Sheet
+    function sendToGoogleSheet() {
+      const data = { 
+        name: studentName,
+        score: score,
+        grade: document.getElementById('grade').innerText,
+        date: new Date().toLocaleDateString()
+      };
+      fetch('YOUR_GOOGLE_SCRIPT_WEB_APP_URL', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(() => alert('Data dihantar ke Google Sheet'));
+    }
     </script>
 </body>
 </html>
