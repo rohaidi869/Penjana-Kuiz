@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Kuiz Interaktif</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #006699;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 8px 14px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      background: #006699;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #004466;
+    }
+    .soalan-item {
+      background: #f0f0f0;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 5px solid #006699;
+    }
+    .info {
+      margin-top: 1rem;
+      background: #eef;
+      padding: 10px;
+      border-left: 5px solid #3399cc;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>📘 Pengurusan Kuiz Interaktif</h2>
+
+  <!-- Borang Tambah Soalan -->
+  <div>
+    <h3>➕ Tambah Soalan</h3>
+    <input type="text" id="questionInput" placeholder="Tulis soalan di sini">
+    <input type="text" id="optionA" placeholder="Pilihan A">
+    <input type="text" id="optionB" placeholder="Pilihan B">
+    <input type="text" id="optionC" placeholder="Pilihan C">
+    <input type="text" id="optionD" placeholder="Pilihan D">
+    <select id="correctAnswer">
+      <option value="">-- Pilih jawapan betul --</option>
+      <option value="A">Pilihan A</option>
+      <option value="B">Pilihan B</option>
+      <option value="C">Pilihan C</option>
+      <option value="D">Pilihan D</option>
+    </select>
+    <textarea id="explanation" placeholder="Penjelasan (jika ada)"></textarea>
+    <button onclick="addQuestion()">Simpan Soalan</button>
+    <button onclick="resetForm()">Reset</button>
+  </div>
+
+  <!-- Papar Soalan -->
+  <h3>📋 Soalan Tersimpan</h3>
+  <div id="questionList"></div>
+
+  <!-- Import / Export -->
+  <hr>
+  <div>
+    <button onclick="exportQuizData()">Muat Turun JSON 📥</button>
+    <input type="file" id="importFile" accept=".json">
+  </div>
+
+  <div class="info" id="status">
+    Tiada data kuiz dimuatkan.
+  </div>
+</div>
+
+<script>
+  let quizData = [];
+
+  // Ambil data dari localStorage
+  const storedData = localStorage.getItem("quizData");
+  if (storedData) {
+    try {
+      quizData = JSON.parse(storedData);
+      updateStatus("✅ Data kuiz dimuat dari simpanan. Jumlah: " + quizData.length);
+    } catch (e) {
+      updateStatus("❌ Ralat parsing localStorage.");
+    }
+  }
+
+  renderQuestions();
+
+  function addQuestion() {
+    const question = document.getElementById('questionInput').value.trim();
+    const A = document.getElementById('optionA').value.trim();
+    const B = document.getElementById('optionB').value.trim();
+    const C = document.getElementById('optionC').value.trim();
+    const D = document.getElementById('optionD').value.trim();
+    const answer = document.getElementById('correctAnswer').value;
+    const explanation = document.getElementById('explanation').value.trim();
+
+    if (!question || !A || !B || !C || !D || !answer) {
+      alert("Sila lengkapkan semua medan termasuk jawapan.");
+      return;
+    }
+
+    const optionMap = { A, B, C, D };
+
+    quizData.push({
+      question,
+      options: [A, B, C, D],
+      answer: optionMap[answer],
+      explanation
+    });
+
+    saveAndRender();
+    resetForm();
+  }
+
+  function resetForm() {
+    document.getElementById('questionInput').value = "";
+    document.getElementById('optionA').value = "";
+    document.getElementById('optionB').value = "";
+    document.getElementById('optionC').value = "";
+    document.getElementById('optionD').value = "";
+    document.getElementById('correctAnswer').value = "";
+    document.getElementById('explanation').value = "";
+  }
+
+  function renderQuestions() {
+    const list = document.getElementById('questionList');
+    list.innerHTML = "";
+    quizData.forEach((q, index) => {
+      const div = document.createElement("div");
+      div.className = "soalan-item";
+      div.innerHTML = `
+        <b>Soalan ${index + 1}:</b> ${q.question}<br>
+        🔸 A. ${q.options[0]}<br>
+        🔸 B. ${q.options[1]}<br>
+        🔸 C. ${q.options[2]}<br>
+        🔸 D. ${q.options[3]}<br>
+        ✅ Jawapan: ${q.answer}<br>
+        💡 Penjelasan: ${q.explanation || "(Tiada)"}
+        <br>
+        <button onclick="deleteQuestion(${index})">Padam</button>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function deleteQuestion(index) {
+    if (confirm("Padam soalan ini?")) {
+      quizData.splice(index, 1);
+      saveAndRender();
+    }
+  }
+
+  function saveAndRender() {
+    localStorage.setItem("quizData", JSON.stringify(quizData));
+    renderQuestions();
+    updateStatus("✅ Disimpan! Jumlah soalan: " + quizData.length);
+  }
+
+  // Import JSON
+  document.getElementById('importFile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        if (Array.isArray(importedData)) {
+          quizData = importedData;
+          saveAndRender();
+        } else {
+          updateStatus("❌ Format fail tidak sah.");
+        }
+      } catch (err) {
+        updateStatus("❌ Gagal import: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // Export JSON
+  function exportQuizData() {
+    const blob = new Blob([JSON.stringify(quizData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "quiz_data.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  function updateStatus(message) {
+    document.getElementById('status').innerText = message;
+  }
+</script>
+
+</body>
+</html>
