@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Pengurus Kuiz Interaktif</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #006699;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 10px 5px 0 0;
+      border: none;
+      border-radius: 5px;
+      background: #006699;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #004466;
+    }
+    input[type="file"] {
+      margin-top: 10px;
+    }
+    .info {
+      margin-top: 1rem;
+      background: #eef;
+      padding: 10px;
+      border-left: 5px solid #3399cc;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🎯 Pengurus Soalan Kuiz</h2>
+
+  <div>
+    <button onclick="exportQuizData()">Muat Turun JSON 📥</button>
+    <input type="file" id="importFile" accept=".json">
+  </div>
+
+  <div class="info" id="status">
+    Tiada data kuiz dimuatkan.
+  </div>
+</div>
+
+<script>
+  let quizData = [];
+
+  // Cubaan muat semula dari localStorage
+  const storedData = localStorage.getItem("quizData");
+  if (storedData) {
+    try {
+      quizData = JSON.parse(storedData);
+      updateStatus("✅ Data kuiz dimuat dari localStorage. Jumlah soalan: " + quizData.length);
+    } catch (e) {
+      console.error("Ralat parsing JSON dari localStorage");
+      updateStatus("⚠️ Ralat muat data dari simpanan.");
+    }
+  }
+
+  // Fungsi eksport
+  function exportQuizData() {
+    const blob = new Blob([JSON.stringify(quizData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "quiz_data.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // Fungsi import fail JSON
+  document.getElementById('importFile').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        if (Array.isArray(importedData)) {
+          quizData = importedData;
+          localStorage.setItem("quizData", JSON.stringify(quizData));
+          updateStatus("✅ Data berjaya diimport. Jumlah soalan: " + quizData.length);
+        } else {
+          updateStatus("❌ Format fail tidak sah.");
+        }
+      } catch (err) {
+        updateStatus("❌ Gagal import fail: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  function updateStatus(message) {
+    document.getElementById('status').innerText = message;
+  }
+
+  // Simpan automatik sebelum keluar
+  window.addEventListener("beforeunload", function() {
+    localStorage.setItem("quizData", JSON.stringify(quizData));
+  });
+</script>
+
+</body>
+</html>
