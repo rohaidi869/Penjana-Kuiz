@@ -471,6 +471,17 @@
     window.onload = function() {
         resetQuiz();
     };
+    // Pastikan tab 'Penjana Prompt' aktif apabila halaman dimuatkan
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Hanya tukar tab jika ia belum aktif
+    const activeTab = document.querySelector('.tab.active');
+    if (!activeTab || activeTab.textContent.trim() !== 'Penjana Prompt') {
+        switchTab('generator');
+    } else if (document.getElementById('quiz').style.display !== 'none') {
+        // Jika tab 'quiz' secara tidak sengaja aktif, reset ia juga
+        resetQuiz();
+    }
+});
 </script>
 
 </body>
