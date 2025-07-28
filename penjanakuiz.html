@@ -439,21 +439,15 @@ input, select {
             </div>
 
 <div class="form-group">
-                <label for="Program"><i class="fas fa-book"></i> 1. Nama Program (cth: Diploma Bahasa Arab, Sarjana Muda Bahasa Arab Untuk Tujuan Khusus):</label>
-                <div class="input-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <input type="text" id="Program" required placeholder="Masukkan nama Program">
-            </div>
-<div class="form-group">
-                <label for="Kursus"><i class="fas fa-book"></i> 2. Nama Kursus (cth: Teknologi Maklumat, Sejarah Islam):</label>
+                <label for="Kursus"><i class="fas fa-book"></i> 1. Nama Kursus (cth: Teknologi Maklumat, Sejarah Islam):</label>
                 <div class="input-icon">
                     <i class="fas fa-book"></i>
                 </div>
                 <input type="text" id="Kursus" required placeholder="Masukkan nama kursus">
             </div>
+
 <div class="form-group">
-                <label for="jumlah"><i class="fas fa-list-ol"></i> 3. Bilangan soalan [default: 10]:</label>
+                <label for="jumlah"><i class="fas fa-list-ol"></i> 2. Bilangan soalan [default: 10]:</label>
                 <div class="input-icon">
                     <i class="fas fa-list-ol"></i>
                 </div>
@@ -461,7 +455,7 @@ input, select {
             </div>
 
 <div class="form-group">
-                <label for="bahasa"><i class="fas fa-language"></i> 4. Bahasa antaramuka:</label>
+                <label for="bahasa"><i class="fas fa-language"></i> 3. Bahasa antaramuka:</label>
                 <div class="input-icon">
                     <i class="fas fa-language"></i>
                 </div>
@@ -473,7 +467,7 @@ input, select {
             </div>
 
 <div class="form-group">
-                <label for="topik"><i class="fas fa-folder-open"></i> 5. Nama topik [default: sama seperti Kursus]:</label>
+                <label for="topik"><i class="fas fa-folder-open"></i> 4. Nama topik [default: sama seperti Kursus]:</label>
                 <div class="input-icon">
                     <i class="fas fa-folder-open"></i>
                 </div>
@@ -629,20 +623,12 @@ document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add(
             playClickSound();
 
 // Dapatkan nilai input
-            const Program = document.getElementById('Program').value.trim();
             const Kursus = document.getElementById('Kursus').value.trim();
             let jumlah = document.getElementById('jumlah').value.trim();
             const bahasa = document.getElementById('bahasa').value;
             let topik = document.getElementById('topik').value.trim();
             const guruPhone = document.getElementById('guru-phone').value.trim();
             const googleScript = document.getElementById('google-script').value.trim();
-
-// Validasi input wajib
-            if (!Program) {
-                alert("Sila masukkan nama Program!");
-                document.getElementById('Program').focus();
-                return;
-            }
 
 // Validasi input wajib
             if (!Kursus) {
@@ -695,7 +681,6 @@ document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add(
             let prompt = `Anda adalah seorang pembangun berpengalaman dalam mencipta sistem kuiz interaktif berasaskan web. Tugas anda ialah membangunkan dan menghasilkan kod HTML lengkap (termasuk CSS dan JavaScript) bagi kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Kuiz ini bertujuan menilai kefahaman pelajar terhadap topik yang diberi melalui soalan pelbagai aras kesukaran (fakta, aplikasi, analisis), dan menyediakan maklum balas serta gred automatik. Pelajar akan menghantar keputusan mereka kepada pensyarah melalui WhatsApp atau Google Sheet. 
 
 **SPESIFIKASI KUIZ:**
-- Program: ${Program}
 - Kursus: ${Kursus}
 - Topik: ${topik}
 - Bahasa: ${bahasaMap[bahasa]}
@@ -706,7 +691,7 @@ document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add(
 **KEHENDAK FUNGSI:**
 1. HTML lengkap dengan CSS dan JavaScript
 2. Tiga halaman:
-   - Halaman Mula (input nama pelajar dan Arahan Menjawab)
+   - Halaman Mula (input nama pelajar)
    - Halaman Kuiz (soalan, jawapan dan Keterangan jawapan)
    - Halaman Sijil (paparan gred)
 3. Fungsi JavaScript:
@@ -723,7 +708,6 @@ document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add(
 - Tambah butang "Hantar Jawapan" di halaman sijil
 - Butang ini akan membuka WhatsApp dengan nombor guru: ${formattedPhone ? '60' + formattedPhone : '[NOMBOR GURU]'}
 - Mesej WhatsApp mengandungi:
-  Nama Program: $[Program]
   Nama Pelajar: [nama]
   Kursus: ${Kursus}
   Topik: ${topik}
@@ -735,7 +719,6 @@ document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add(
 - Tambah butang "Hantar ke Google Sheet" di halaman sijil
 - Gunakan URL: ${googleScript || '[URL_GOOGLE_SCRIPT]'}
 - Data yang dihantar:
-  Program: [program]
   Nama: [nama]
   Skor: [skor]
   Gred: [gred]
@@ -1079,7 +1062,7 @@ function sendExampleWhatsApp() {
             }
 
 const phone = `60${guruPhone}`;
-            const msg = `Nama Program: ${quizProgrammeName}%Nama Pelajar: ${quizStudentName}%0AKursus: Psikolinguistik%0ATopik: Pemerolehan Bahasa Kedua%0ASkor: ${quizScore}/${quizData.length}%0AGred: ${document.getElementById('quiz-grade').innerText}%0ATarikh: ${new Date().toLocaleDateString()}`;
+            const msg = `Nama Pelajar: ${quizStudentName}%0AKursus: Psikolinguistik%0ATopik: Pemerolehan Bahasa Kedua%0ASkor: ${quizScore}/${quizData.length}%0AGred: ${document.getElementById('quiz-grade').innerText}%0ATarikh: ${new Date().toLocaleDateString()}`;
             window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
         }
 
