@@ -1,697 +1,428 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="copyright" content="hak cipta terpelihara 2025 almasalc">
-    <title>Penjana Kuiz Interaktif</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #3498db;
-            --secondary: #2ecc71;
-            --dark: #2c3e50;
-            --light: #ecf0f1;
-            --danger: #e74c3c;
-            --whatsapp: #25D366;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Penjana Prompt & Contoh Kuiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Cairo', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+        text-align: center;
+        color: #2c3e50;
+    }
+    /* Tab Navigation Styles */
+    .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #ddd;
+    }
+    .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        background-color: #e0e0e0;
+        border: 1px solid #ccc;
+        border-bottom: none;
+        margin: 0 5px -1px;
+        border-radius: 5px 5px 0 0;
+        transition: background-color 0.3s;
+    }
+    .tab:hover {
+        background-color: #d0d0d0;
+    }
+    .tab.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 15px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    input[type="text"], input[type="number"], select {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    /* Output Styles */
+    #output {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        white-space: pre-wrap; /* Preserves formatting */
+        display: none; /* Hidden by default */
+    }
+    #prompt-content {
+        max-height: 300px;
+        overflow-y: auto;
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+    #loading {
+        text-align: center;
+        display: none;
+        margin: 20px 0;
+    }
+    #loading::after {
+        content: "Memproses...";
+    }
+    #copy-btn, #whatsapp-btn {
+        margin-top: 10px;
+        display: none; /* Hidden by default */
+    }
+    #whatsapp-btn {
+        background-color: #25D366;
+        margin-left: 10px;
+    }
+    #whatsapp-btn:hover {
+        background-color: #128C7E;
+    }
 
-* {
-            box-sizing: border-box;
-            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
-            margin: 0;
-            padding: 20px;
-            color: var(--dark);
-            min-height: 100vh;
-        }
-
-.container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-.container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-
-.header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-.logo {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-        }
-
-.subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 25px;
-            font-size: 1rem;
-        }
-
-.form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-.input-icon {
-            position: absolute;
-            left: 15px;
-            top: 42px;
-            color: #777;
-        }
-
-input, select {
-            width: 100%;
-            padding: 12px 12px 12px 40px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-input:focus, select:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-button {
-            background: linear-gradient(135deg, var(--primary), #1d6fa5);
-            color: white;
-            border: none;
-            padding: 14px 30px;
-            font-size: 17px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            display: block;
-            margin: 35px auto;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 12px rgba(52, 152, 219, 0.3);
-        }
-
-button:active {
-            transform: translateY(1px);
-        }
-
-button.whatsapp-btn {
-            background: linear-gradient(135deg, var(--whatsapp), #128C7E);
-            box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-button.whatsapp-btn:hover {
-            box-shadow: 0 7px 12px rgba(37, 211, 102, 0.3);
-        }
-
-.output {
-            background-color: var(--light);
-            border-radius: 10px;
-            padding: 25px;
-            margin-top: 30px;
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            max-height: 400px;
-            overflow-y: auto;
-            display: none;
-            border: 1px dashed var(--primary);
-            position: relative;
-        }
-
-.output-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-.output-title {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-.btn-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-.copy-btn {
-            background: linear-gradient(135deg, var(--secondary), #27ae60);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-.copy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
-        }
-
-.loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-.spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-@keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-.instructions {
-            background-color: #e3f2fd;
-            border-left: 4px solid var(--primary);
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin: 25px 0;
-            font-size: 0.9rem;
-        }
-
-.whatsapp-section {
-            background-color: #e6ffeb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border-left: 4px solid var(--whatsapp);
-        }
-
-/* Styling untuk contoh kuiz */
-        .quiz-container {
-            background: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            border-radius: 20px;
-            margin-top: 30px;
-            display: none;
-        }
-
-.quiz-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-.quiz-header h2 {
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-.options button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-            text-align: left;
-            padding: 12px 15px;
-            background: #f0f8ff;
-            color: var(--dark);
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            transition: all 0.2s;
-        }
-
-.options button:hover {
-            background: #e0f0ff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-.explanation {
-            margin-top: 15px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            font-style: italic;
-            color: #555;
-            border-left: 4px solid var(--secondary);
-        }
-
-.nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-.nav-buttons button {
-            margin: 0;
-            display: inline-block;
-            width: auto;
-        }
-
-#certificate, #quiz-container {
-            display: none;
-        }
-
-.tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-.tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #f0f0f0;
-            margin: 0 5px 5px;
-            transition: all 0.3s;
-        }
-
-.tab.active {
-            background: var(--primary);
-            color: white;
-        }
-
-.tab-content {
-            display: none;
-        }
-
-.tab-content.active {
-            display: block;
-        }
-
-.certificate-content {
-            text-align: center;
-            padding: 20px;
-        }
-
-/* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 10px;
-            }
-
-h1 {
-                font-size: 1.5rem;
-            }
-
-button {
-                padding: 12px 25px;
-                font-size: 16px;
-                width: 100%;
-            }
-
-.btn-group {
-                flex-direction: column;
-            }
-
-.copy-btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-input, select {
-                padding: 12px 12px 12px 40px;
-            }
-
-.nav-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-.nav-buttons button {
-                width: 100%;
-            }
-        }
-
-@media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-.container {
-                padding: 15px;
-            }
-
-.output {
-                padding: 15px;
-            }
-
-.logo {
-                font-size: 2rem;
-            }
-
-.tabs {
-                flex-direction: column;
-            }
-
-.tab {
-                width: 100%;
-                margin: 0 0 5px 0;
-            }
-        }
-    </style>
+/* Quiz Example Styles */
+    #quiz-certificate {
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #e8f5e9; /* Light green background */
+        display: none; /* Hidden by default */
+    }
+    #quiz-question {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    #quiz-options button {
+        display: block;
+        width: 100%;
+        margin-bottom: 5px;
+        padding: 10px;
+        text-align: left;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    #quiz-options button:hover {
+        background-color: #e0e0e0;
+    }
+    #quiz-options button:disabled {
+        background-color: #dcdcdc;
+        cursor: not-allowed;
+    }
+    #quiz-explanation {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 4px;
+        background-color: #fff9c4; /* Light yellow for explanation */
+        min-height: 20px;
+    }
+    .quiz-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .quiz-nav button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+    #next-btn.quiz-end {
+        background-color: #28a745; /* Hijau untuk butang 'Tamam' */
+    }
+    #next-btn.quiz-end:hover {
+        background-color: #218838;
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('generator')">Penjana Prompt</div>
-            <div class="tab" onclick="switchTab('quiz')">Contoh Kuiz</div>
-        </div>
 
-<!-- Tab Penjana Prompt -->
-        <div id="generator" class="tab-content active">
-            <div class="header">
-                <div class="logo">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <h1>Penjana Prompt Kuiz Interaktif</h1>
-                <p class="subtitle">Hasilkan kuiz interaktif untuk pelajar anda dalam beberapa langkah mudah</p>
+<div class="container">
+    <h1>Penjana Prompt & Contoh Kuiz</h1>
+
+<!-- Tab Navigation -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('generator')">Penjana Prompt</div>
+        <div class="tab" onclick="switchTab('quiz')">Contoh Kuiz</div>
+    </div>
+
+<!-- Tab Content: Generator -->
+    <div id="generator" class="tab-content active">
+        <h2>Penjana Prompt Kuiz</h2>
+        <form id="prompt-form">
+            <div class="form-group">
+                <label for="Program">Program:</label>
+                <input type="text" id="Program" placeholder="e.g., Diploma Sains Komputer" required>
             </div>
-
-<div class="instructions">
-                <p><strong>Arahan Penggunaan:</strong></p>
-                <ol>
-                    <li>Isi maklumat kuiz di bawah</li>
-                    <li>Klik "Hasilkan Prompt Kuiz"</li>
-                    <li>Salin prompt yang dihasilkan</li>
-                    <li>Tampal ke ChatGPT atau AI lain untuk dapatkan kod HTML</li>
-                    <li>Pelajar boleh hantar keputusan mereka kepada pensyarah melalui WhatsApp</li>
-                </ol>
+            <div class="form-group">
+                <label for="Kursus">Kursus:</label>
+                <input type="text" id="Kursus" placeholder="e.g., Pengaturcaraan Web" required>
             </div>
-
-<div class="form-group">
-                <label for="Kursus"><i class="fas fa-book"></i> 1. Nama Kursus (cth: Teknologi Maklumat, Sejarah Islam):</label>
-                <div class="input-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <input type="text" id="Kursus" required placeholder="Masukkan nama kursus">
-            </div>
-
-<div class="form-group">
-                <label for="jumlah"><i class="fas fa-list-ol"></i> 2. Bilangan soalan [default: 10]:</label>
-                <div class="input-icon">
-                    <i class="fas fa-list-ol"></i>
-                </div>
+            <div class="form-group">
+                <label for="jumlah">Bilangan Soalan (default 10):</label>
                 <input type="number" id="jumlah" min="1" placeholder="10">
             </div>
-
-<div class="form-group">
-                <label for="bahasa"><i class="fas fa-language"></i> 3. Bahasa antaramuka:</label>
-                <div class="input-icon">
-                    <i class="fas fa-language"></i>
-                </div>
+            <div class="form-group">
+                <label for="topik">Topik (default: Nama Kursus):</label>
+                <input type="text" id="topik" placeholder="e.g., HTML Dasar">
+            </div>
+            <div class="form-group">
+                <label for="bahasa">Bahasa:</label>
                 <select id="bahasa">
-                    <option value="AR">Arab (AR)</option>
-                    <option value="BM" selected>Bahasa Melayu (BM)</option>
-                    <option value="BI">Bahasa Inggeris (BI)</option>
+                    <option value="BM">Bahasa Melayu</option>
+                    <option value="BI">Bahasa Inggeris</option>
+                    <option value="AR">Bahasa Arab</option>
                 </select>
             </div>
-
-<div class="form-group">
-                <label for="topik"><i class="fas fa-folder-open"></i> 4. Nama topik [default: sama seperti Kursus]:</label>
-                <div class="input-icon">
-                    <i class="fas fa-folder-open"></i>
-                </div>
-                <input type="text" id="topik" placeholder="Masukkan nama topik (jika berbeza)">
+            <div class="form-group">
+                <label for="guru-phone">Nombor WhatsApp Guru (tanpa 60, cth: 123456789):</label>
+                <input type="text" id="guru-phone" placeholder="123456789">
             </div>
-
-<div class="whatsapp-section">
-                <div class="form-group">
-                    <label for="guru-phone"><i class="fab fa-whatsapp"></i> Nombor WhatsApp Guru (untuk terima jawapan):</label>
-                    <div class="input-icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
-                    <input type="tel" id="guru-phone" placeholder="Contoh: 123456789">
-                    <small>Format: tanpa '60' atau '+' (cth: 123456789)</small>
-                </div>
+            <div class="form-group">
+                <label for="google-script">URL Google Script Web App:</label>
+                <input type="text" id="google-script" placeholder="https://script.google.com/macros/s/...">
             </div>
+            <button type="button" onclick="hasilkanPrompt()">Jana Prompt</button>
+        </form>
 
-<div class="form-group">
-                <label for="google-script"><i class="fas fa-table"></i> URL Google Script (untuk Google Sheet):</label>
-                <div class="input-icon">
-                    <i class="fas fa-link"></i>
-                </div>
-                <input type="text" id="google-script" placeholder="URL Google Script (optional)">
-            </div>
+<div id="loading">Memproses...</div>
 
-<button onclick="hasilkanPrompt()">
-                <i class="fas fa-cogs"></i> Hasilkan Prompt Kuiz
-            </button>
-
-<div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Menjana prompt kuiz...</p>
-            </div>
-
-<div id="output" class="output">
-                <div class="output-header">
-                    <div class="output-title">PROMPT KUIZ SIAP DIGUNAKAN</div>
-                </div>
-                <div id="prompt-content"></div>
-                <div class="btn-group">
-                    <button class="copy-btn" id="copy-btn">
-                        <i class="fas fa-copy"></i> Salin Prompt
-                    </button>
-                    <button class="copy-btn whatsapp-btn" id="whatsapp-btn">
-                        <i class="fab fa-whatsapp"></i> Hantar via WhatsApp
-                    </button>
-                </div>
-            </div>
-        </div>
-
-<!-- Tab Contoh Kuiz -->
-        <div id="quiz" class="tab-content">
-            <div class="container quiz-container" id="quiz-start-container">
-                <div class="quiz-header">
-                    <h2>Kuiz Pemerolehan Bahasa Kedua</h2>
-                    <p>Uji kefahaman anda tentang psikolinguistik</p>
-                </div>
-                <input type="text" id="quiz-studentName" placeholder="Masukkan Nama Anda" style="width:100%; padding:12px; margin:15px 0; border:2px solid #ddd; border-radius:8px;">
-                <button onclick="startExampleQuiz()">Mula Kuiz</button>
-            </div>
-
-<div class="container quiz-container" id="quiz-quiz-container">
-                <div class="quiz-header">
-                    <h2>Kuiz Pemerolehan Bahasa Kedua</h2>
-                    <p>Soalan <span id="current-question-num">1</span> daripada <span id="total-questions">10</span></p>
-                </div>
-                <h2 id="quiz-question"></h2>
-                <div class="options" id="quiz-options"></div>
-                <div class="explanation" id="quiz-explanation"></div>
-                <div class="nav-buttons">
-                    <button onclick="prevQuizQuestion()">
-                        <i class="fas fa-arrow-left"></i> Sebelum
-                    </button>
-                    <button onclick="nextQuizQuestion()">
-                        Seterusnya <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-<div class="container quiz-container" id="quiz-certificate">
-                <div class="certificate-content">
-                    <h2>Tahniah, <span id="quiz-certName"></span>!</h2>
-                    <p>Anda telah berjaya menamatkan kuiz:</p>
-                    <h3>Pemerolehan Bahasa Kedua</h3>
-                    <p>Skor Anda: <span id="quiz-scoreDisplay"></span></p>
-                    <p>Gred: <span id="quiz-grade"></span></p>
-                    <p id="quiz-motivasi"></p>
-                    <div class="btn-group">
-                        <button class="whatsapp-btn" onclick="sendExampleWhatsApp()">
-                            <i class="fab fa-whatsapp"></i> Hantar Jawapan (WhatsApp)
-                        </button>
-                        <button onclick="sendExampleToGoogleSheet()" style="background:linear-gradient(135deg, #4285F4, #1a73e8);">
-                            <i class="fas fa-table"></i> Hantar ke Google Sheet
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-<div style="text-align: center; margin-top: 30px; font-size: 0.8rem; color: #666;">
-            hak cipta terpelihara © 2025 almasalc
+<div id="output">
+            <h3>Prompt Kuiz Anda:</h3>
+            <div id="prompt-content"></div>
+            <button type="button" id="copy-btn">Salin Prompt</button>
+            <button type="button" id="whatsapp-btn">Hantar ke Guru (WhatsApp)</button>
         </div>
     </div>
 
+<!-- Tab Content: Quiz Example -->
+    <div id="quiz" class="tab-content">
+        <h2>Contoh Kuiz Interaktif</h2>
+        <div id="quiz-start-container">
+            <div class="form-group">
+                <label for="quiz-studentName">Nama Anda:</label>
+                <input type="text" id="quiz-studentName" placeholder="Masukkan nama anda">
+            </div>
+            <p><strong>Arahan:</strong> Jawab soalan berikut. Penjelasan akan dipaparkan selepas anda memilih jawapan. Gunakan butang "Sebelumnya" dan "Seterusnya" untuk navigasi.</p>
+            <button onclick="startExampleQuiz()">Mula Kuiz</button>
+        </div>
+
+<div id="quiz-quiz-container" style="display:none;">
+            <p>Soalan <span id="current-question-num">1</span> daripada <span id="total-questions">0</span></p>
+            <div id="quiz-question">Soalan akan muncul di sini.</div>
+            <div id="quiz-options"></div>
+            <div id="quiz-explanation"></div>
+            <div class="quiz-nav">
+                <button onclick="prevQuizQuestion()" id="prev-btn" disabled>Sebelumnya</button>
+                <button onclick="nextQuizQuestion()" id="next-btn">Seterusnya</button>
+            </div>
+        </div>
+
+<div id="quiz-certificate">
+            <h2>Sijil Prestasi</h2>
+            <p>Nama: <span id="quiz-certName"></span></p>
+            <p>Kursus: Psikolinguistik</p>
+            <p>Topik: Pemerolehan Bahasa Kedua</p>
+            <p>Skor: <span id="quiz-scoreDisplay"></span></p>
+            <p>Gred: <span id="quiz-grade"></span></p>
+            <p><span id="quiz-motivasi"></span></p>
+            <button onclick="sendExampleWhatsApp()">Hantar ke Guru (WhatsApp)</button>
+            <button onclick="sendExampleToGoogleSheet()">Hantar ke Google Sheet</button>
+            <button onclick="resetQuiz()">Cuba Lagi</button>
+        </div>
+    </div>
+</div>
+
 <script>
-        // Fungsi untuk tab navigation
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+    // --- FUNGSI-FUNGSI UNTUK TAB NAVIGATION ---
+    // Definisi pemboleh ubah global untuk tab penjana
+    const quizProgrammeName = "Diploma Bahasa Arab"; // Digunakan dalam sendExampleWhatsApp()
 
-document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
+// Fungsi untuk tab navigation
+    function switchTab(tabName) {
+        // Alih kelas 'active' dari semua tab
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        // Sembunyikan semua kandungan tab
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active'); // Gunakan classList untuk konsistensi
+            content.style.display = 'none';
+        });
+        // Tetapkan kelas 'active' dan paparkan kandungan tab yang dipilih
+        document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+        const activeContent = document.getElementById(tabName);
+        activeContent.classList.add('active');
+        activeContent.style.display = 'block';
 
-document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-
-// Reset contoh kuiz apabila beralih tab
-            if(tabName === 'quiz') {
-                resetQuiz();
-            }
+// Reset kuiz jika tab 'quiz' dipilih
+        if (tabName === 'quiz') {
+            resetQuiz();
         }
+    }
 
 // Fungsi untuk reset contoh kuiz
-        function resetQuiz() {
-            document.getElementById('quiz-start-container').style.display = 'block';
-            document.getElementById('quiz-quiz-container').style.display = 'none';
-            document.getElementById('quiz-certificate').style.display = 'none';
-            document.getElementById('quiz-studentName').value = '';
-        }
+    function resetQuiz() {
+        document.getElementById('quiz-start-container').style.display = 'block';
+        document.getElementById('quiz-quiz-container').style.display = 'none';
+        document.getElementById('quiz-certificate').style.display = 'none';
+        document.getElementById('quiz-studentName').value = '';
+        // Reset navigasi
+        document.getElementById('prev-btn').disabled = true;
+        document.getElementById('next-btn').textContent = 'Seterusnya';
+        document.getElementById('next-btn').classList.remove('quiz-end');
+    }
 
-// Fungsi untuk memainkan bunyi klik
-        function playClickSound() {
-            const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
-            audio.play().catch(() => {});
-        }
+// Fungsi untuk memainkan bunyi klik (mungkin gagal kerana CORS)
+    function playClickSound() {
+        const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
+        audio.play().catch((e) => {
+            console.error("Bunyi klik gagal dimainkan:", e);
+            // Bunyi tidak dimainkan, teruskan sahaja
+        });
+    }
 
-// Fungsi untuk memainkan bunyi jawapan betul
-        function playCorrectSound() {
-            const audio = new Audio('https://freesound.org/data/previews/320/320181_5260875-lq.mp3');
-            audio.play().catch(() => {});
-        }
+// Fungsi untuk memainkan bunyi jawapan betul (mungkin gagal kerana CORS)
+    function playCorrectSound() {
+        const audio = new Audio('https://freesound.org/data/previews/320/320181_5260875-lq.mp3');
+        audio.play().catch((e) => {
+             console.error("Bunyi betul gagal dimainkan:", e);
+             // Bunyi tidak dimainkan, teruskan sahaja
+        });
+    }
 
-// Fungsi untuk memainkan bunyi jawapan salah
-        function playWrongSound() {
-            const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3');
-            audio.play().catch(() => {});
-        }
+// Fungsi untuk memainkan bunyi jawapan salah (mungkin gagal kerana CORS)
+    function playWrongSound() {
+        const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3');
+        audio.play().catch((e) => {
+             console.error("Bunyi salah gagal dimainkan:", e);
+             // Bunyi tidak dimainkan, teruskan sahaja
+        });
+    }
 
 // ===== FUNGSI PENJANA PROMPT =====
-        function hasilkanPrompt() {
-            playClickSound();
+    function hasilkanPrompt() {
+        playClickSound();
+        // Dapatkan nilai input
+        const Program = document.getElementById('Program').value.trim();
+        const Kursus = document.getElementById('Kursus').value.trim();
+        let jumlah = document.getElementById('jumlah').value.trim();
+        const bahasa = document.getElementById('bahasa').value;
+        let topik = document.getElementById('topik').value.trim();
+        const guruPhone = document.getElementById('guru-phone').value.trim();
+        const googleScript = document.getElementById('google-script').value.trim();
 
-// Dapatkan nilai input
-            const Kursus = document.getElementById('Kursus').value.trim();
-            let jumlah = document.getElementById('jumlah').value.trim();
-            const bahasa = document.getElementById('bahasa').value;
-            let topik = document.getElementById('topik').value.trim();
-            const guruPhone = document.getElementById('guru-phone').value.trim();
-            const googleScript = document.getElementById('google-script').value.trim();
-
-// Validasi input wajib
-            if (!Kursus) {
-                alert("Sila masukkan nama kursus!");
-                document.getElementById('Kursus').focus();
-                return;
-            }
+// Validasi input wajib (HTML5 'required' juga membantu)
+        if (!Program) {
+            alert("Sila masukkan nama Program!");
+            document.getElementById('Program').focus();
+            return;
+        }
+        if (!Kursus) {
+            alert("Sila masukkan nama kursus!");
+            document.getElementById('Kursus').focus();
+            return;
+        }
 
 // Tampilkan loading
-            document.getElementById('loading').style.display = 'block';
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('output').style.display = 'none'; // Sembunyikan output sebelumnya
+        document.getElementById('copy-btn').style.display = 'none';
+        document.getElementById('whatsapp-btn').style.display = 'none';
 
 // Jika jumlah kosong, guna 10
-            if (jumlah === '') {
-                jumlah = '10';
-            }
-
-// Jika topik kosong, guna Kursus
-            if (topik === '') {
-                topik = Kursus;
-            }
+        if (jumlah === '') {
+            jumlah = '10';
+        }
+        // Jika topik kosong, guna Kursus
+        if (topik === '') {
+            topik = Kursus;
+        }
 
 // Peta kod bahasa
-            const bahasaMap = {
-                "AR": "Arab",
-                "BM": "Bahasa Melayu",
-                "BI": "Bahasa Inggeris"
-            };
+        const bahasaMap = {
+            "AR": "Arab",
+            "BM": "Bahasa Melayu",
+            "BI": "Bahasa Inggeris"
+        };
 
 // Format nombor WhatsApp (tanpa prefix)
-            const formattedPhone = guruPhone;
+        const formattedPhone = guruPhone;
 
 // Generate quizData example based on 'jumlah'
-            let quizDataExample = `    {
+        let quizDataExample = `    {
         question: "Soalan 1 untuk topik ${topik} dalam ${bahasaMap[bahasa]}?",
         options: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
         answer: "Pilihan A",
         explanation: "Penjelasan jawapan untuk soalan 1."
     }`;
-            for (let i = 2; i <= parseInt(jumlah); i++) {
-                quizDataExample += `,
+        for (let i = 2; i <= parseInt(jumlah); i++) {
+            quizDataExample += `,
     {
         question: "Soalan ${i} untuk topik ${topik} dalam ${bahasaMap[bahasa]}?",
         options: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
         answer: "Pilihan A",
         explanation: "Penjelasan jawapan untuk soalan ${i}."
     }`;
-            }
+        }
 
 // Bina prompt tanpa rujukan logo
-            let prompt = `Anda adalah seorang pembangun berpengalaman dalam mencipta sistem kuiz interaktif berasaskan web. Tugas anda ialah membangunkan dan menghasilkan kod HTML lengkap (termasuk CSS dan JavaScript) bagi kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Kuiz ini bertujuan menilai kefahaman pelajar terhadap topik yang diberi melalui soalan pelbagai aras kesukaran (fakta, aplikasi, analisis), dan menyediakan maklum balas serta gred automatik. Pelajar akan menghantar keputusan mereka kepada pensyarah melalui WhatsApp atau Google Sheet. 
-
+        let prompt = `Anda adalah seorang pembangun berpengalaman dalam mencipta sistem kuiz interaktif berasaskan web. Tugas anda ialah membangunkan dan menghasilkan kod HTML lengkap (termasuk CSS dan JavaScript) bagi kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Kuiz ini bertujuan menilai kefahaman pelajar terhadap topik yang diberi melalui soalan pelbagai aras kesukaran (fakta, aplikasi, analisis), dan menyediakan maklum balas serta gred automatik. Pelajar akan menghantar keputusan mereka kepada pensyarah melalui WhatsApp atau Google Sheet.
 **SPESIFIKASI KUIZ:**
+- Program: ${Program}
 - Kursus: ${Kursus}
 - Topik: ${topik}
 - Bahasa: ${bahasaMap[bahasa]}
 - Bilangan Soalan: ${jumlah}
 - Format: Pilihan berganda (4 pilihan)
 - Google Script URL: ${googleScript || 'Tidak disediakan'}
-
 **KEHENDAK FUNGSI:**
 1. HTML lengkap dengan CSS dan JavaScript
 2. Tiga halaman:
-   - Halaman Mula (input nama pelajar)
+   - Halaman Mula (input nama pelajar dan Arahan Menjawab)
    - Halaman Kuiz (soalan, jawapan dan Keterangan jawapan)
    - Halaman Sijil (paparan gred)
 3. Fungsi JavaScript:
@@ -703,29 +434,27 @@ document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add(
    - fungsi hantar ke Google Sheet
    - paparkan jawapan yang betul dan keterangan bagi jawapan yang betul akan dipaparkan di bawah pilihan jawapan sebelum pelajar berpindah ke soalan seterusnya
    - Mainkan bunyi klik setiap kali pelajar memilih jawapan
-
 **FUNGSI WHATSAPP:**
 - Tambah butang "Hantar Jawapan" di halaman sijil
 - Butang ini akan membuka WhatsApp dengan nombor guru: ${formattedPhone ? '60' + formattedPhone : '[NOMBOR GURU]'}
 - Mesej WhatsApp mengandungi:
+  Nama Program: ${Program}
   Nama Pelajar: [nama]
   Kursus: ${Kursus}
   Topik: ${topik}
   Skor: [skor]/[jumlah soalan]
   Gred: [gred]
   Tarikh: [tarikh selesai]
-
 **FUNGSI GOOGLE SHEET:**
 - Tambah butang "Hantar ke Google Sheet" di halaman sijil
 - Gunakan URL: ${googleScript || '[URL_GOOGLE_SCRIPT]'}
 - Data yang dihantar:
+  Program: [program]
   Nama: [nama]
   Skor: [skor]
   Gred: [gred]
   Tarikh: [tarikh]
-
 **FUNGSI BUNYI:**
-// Sertakan fungsi bunyi dalam JavaScript
 function playClickSound() {
     const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
     audio.play().catch(() => {});
@@ -738,7 +467,6 @@ function playWrongSound() {
     const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3');
     audio.play().catch(() => {});
 }
-
 **CONTOH KOD UTAMA:**
 function startQuiz() {
     studentName = document.getElementById('studentName').value;
@@ -747,26 +475,24 @@ function startQuiz() {
     document.getElementById('quiz-container').style.display = 'block';
     loadQuestion();
 }
-
 function loadQuestion() {
     const q = quizData[currentQuestion];
-    document.getElementById('question').innerText = q.question;
+    document.getElementById('question').textContent = q.question; // Gunakan textContent
     const optionsDiv = document.getElementById('options');
-    optionsDiv.innerHTML = '';
-    document.getElementById('explanation').innerText = '';
+    optionsDiv.innerHTML = ''; // Kosongkan pilihan sebelumnya
+    document.getElementById('explanation').textContent = ''; // Kosongkan penjelasan sebelumnya
     q.options.forEach(option => {
         const btn = document.createElement('button');
-        btn.innerText = option;
+        btn.textContent = option; // Gunakan textContent
         btn.onclick = () => checkAnswer(option);
         optionsDiv.appendChild(btn);
     });
 }
-
 function checkAnswer(selected) {
     playClickSound();
     const q = quizData[currentQuestion];
     const isCorrect = selected === q.answer;
-    document.getElementById('explanation').innerText = q.explanation;
+    document.getElementById('explanation').textContent = q.explanation; // Papar penjelasan
     if (isCorrect) {
         score++;
         playCorrectSound();
@@ -774,7 +500,6 @@ function checkAnswer(selected) {
         playWrongSound();
     }
 }
-
 function nextQuestion() {
     if (currentQuestion < quizData.length - 1) {
         currentQuestion++;
@@ -783,19 +508,17 @@ function nextQuestion() {
         endQuiz();
     }
 }
-
 function prevQuestion() {
     if (currentQuestion > 0) {
         currentQuestion--;
         loadQuestion();
     }
 }
-
 function endQuiz() {
     document.getElementById('quiz-container').style.display = 'none';
     document.getElementById('certificate').style.display = 'block';
-    document.getElementById('certName').innerText = studentName;
-    document.getElementById('scoreDisplay').innerText = \`\${score}/\${quizData.length}\`;
+    document.getElementById('certName').textContent = studentName; // Gunakan textContent
+    document.getElementById('scoreDisplay').textContent = \`\${score}/\${quizData.length}\`;
     const percent = (score / quizData.length) * 100;
     let grade, motivasi;
     if (percent >= 90) {
@@ -811,30 +534,27 @@ function endQuiz() {
         grade = "Perlu Semakan";
         motivasi = "Jangan putus asa! Teruskan ulang kaji dan cuba lagi.";
     }
-    document.getElementById('grade').innerText = grade;
-    document.getElementById('motivasi').innerText = motivasi;
+    document.getElementById('grade').textContent = grade; // Gunakan textContent
+    document.getElementById('motivasi').textContent = motivasi; // Gunakan textContent
 }
-
 **CONTOH QUIZDATA:**
 \`\`\`javascript
 const quizData = [
 ${quizDataExample}
 ];
 \`\`\`
-
 **SISTEM GRED:**
 - 90–100%: ممتاز / Cemerlang / Excellent → "Tahniah! Anda menunjukkan penguasaan yang sangat baik!"
 - 70–89%: جيد جدا / Sangat Baik / Very Good → "Teruskan usaha anda. Pencapaian anda sangat membanggakan!"
 - 50–69%: مقبول / Lulus / Pass → "Anda lulus, tetapi masih ada ruang untuk penambahbaikan."
 - <50%: يحتاج إلى المراجعة / Perlu Semakan / Needs Review → "Jangan putus asa! Teruskan ulang kaji dan cuba lagi."
-
 **ARAHAN TAMBAHAN:**
 1. Pastikan UI responsif menggunakan CSS Flexbox/Grid
 2. Gunakan font Google 'Cairo' untuk semua teks
 3. Tambahkan efek hover pada butang
 4. Sertakan komen dalam kod untuk penjelasan fungsi penting
 5. Tambahkan fungsi hantar melalui WhatsApp dan Google Sheet seperti yang ditetapkan
-6. Hasilkan jumalah soalan seperti yang dipinta
+6. Hasilkan jumlah soalan seperti yang dipinta
 7. Pastikan paparan jawapan yang betul dan keterangan bagi jawapan yang betul akan dipaparkan di bawah pilihan jawapan sebelum pelajar berpindah ke soalan seterusnya
 8. Fungsi bunyi mesti dipanggil setiap kali pelajar klik mana-mana pilihan
 9. Gunakan warna tema profesional (biru dan hijau)
@@ -842,253 +562,316 @@ ${quizDataExample}
 `;
 
 // Paparkan output setelah 1.5s (simulasi proses)
-            setTimeout(() => {
-                const promptContent = document.getElementById('prompt-content');
-                promptContent.textContent = prompt;
-
-const outputDiv = document.getElementById('output');
-                outputDiv.style.display = 'block';
-
-document.getElementById('loading').style.display = 'none';
-
-// Tampilkan butang WhatsApp jika nombor diisi
-                if (formattedPhone) {
-                    document.getElementById('whatsapp-btn').style.display = 'flex';
-                }
-            }, 1500);
-        }
+        setTimeout(() => {
+            const promptContent = document.getElementById('prompt-content');
+            promptContent.textContent = prompt; // Gunakan textContent untuk teks panjang
+            const outputDiv = document.getElementById('output');
+            outputDiv.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('copy-btn').style.display = 'inline-block';
+            // Tampilkan butang WhatsApp jika nombor diisi
+            if (formattedPhone) {
+                document.getElementById('whatsapp-btn').style.display = 'inline-block';
+            }
+        }, 1500);
+    }
 
 // Fungsi untuk menyalin prompt
-        document.getElementById('copy-btn').addEventListener('click', () => {
-            playClickSound();
-            const promptContent = document.getElementById('prompt-content').textContent;
-            navigator.clipboard.writeText(promptContent)
-                .then(() => {
-                    alert('Prompt telah disalin ke clipboard!');
-                })
-                .catch(err => {
-                    console.error('Gagal menyalin: ', err);
-                    alert('Gagal menyalin. Sila cuba lagi.');
-                });
-        });
+    document.getElementById('copy-btn').addEventListener('click', () => {
+        playClickSound();
+        const promptContent = document.getElementById('prompt-content').textContent;
+        navigator.clipboard.writeText(promptContent)
+            .then(() => {
+                alert('Prompt telah disalin ke clipboard!');
+            })
+            .catch(err => {
+                console.error('Gagal menyalin: ', err);
+                alert('Gagal menyalin. Sila cuba lagi.');
+            });
+    });
 
 // Fungsi untuk hantar melalui WhatsApp
-        document.getElementById('whatsapp-btn').addEventListener('click', () => {
-            playClickSound();
-            const guruPhone = document.getElementById('guru-phone').value.trim();
-            const Kursus = document.getElementById('Kursus').value.trim();
-
-if (!guruPhone) {
-                alert("Sila masukkan nombor WhatsApp guru terlebih dahulu!");
-                return;
-            }
-
-const formattedPhone = `60${guruPhone}`;
-            const promptContent = document.getElementById('prompt-content').textContent;
-
-const whatsappMessage = encodeURIComponent(
-                `*Permintaan Penjana Kuiz*\n\n` +
-                `Kursus: ${Kursus}\n` +
-                `Prompt Kuiz telah dijana. Sila lihat di bawah:\n\n${promptContent}`
-            );
-
-const whatsappUrl = `https://wa.me/${formattedPhone}?text=${whatsappMessage}`;
-
-window.open(whatsappUrl, '_blank');
-        });
+    document.getElementById('whatsapp-btn').addEventListener('click', () => {
+        playClickSound();
+        const guruPhone = document.getElementById('guru-phone').value.trim();
+        const Kursus = document.getElementById('Kursus').value.trim();
+        if (!guruPhone) {
+            alert("Sila masukkan nombor WhatsApp guru terlebih dahulu!");
+            return;
+        }
+        const formattedPhone = `60${guruPhone}`;
+        const promptContent = document.getElementById('prompt-content').textContent;
+        const whatsappMessage = encodeURIComponent(
+            `*Permintaan Penjana Kuiz*
+` +
+            `Kursus: ${Kursus}
+` +
+            `Prompt Kuiz telah dijana. Sila lihat di bawah:
+${promptContent}`
+        );
+        const whatsappUrl = `https://wa.me/${formattedPhone}?text=${whatsappMessage}`;
+        window.open(whatsappUrl, '_blank');
+    });
 
 // Format automatik untuk input telefon (hanya angka)
-        document.getElementById('guru-phone').addEventListener('input', function(e) {
-            e.target.value = e.target.value.replace(/\D/g, '');
-        });
+    document.getElementById('guru-phone').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
 
-// ===== KOD UNTUK CONTOH KUIZ =====
-        const quizData = [
-            {
-                question: "Apakah definisi psikolinguistik yang paling tepat?",
-                options: [
-                    "Kajian tentang hubungan antara bahasa dan budaya",
-                    "Kajian tentang struktur bahasa formal",
-                    "Kajian tentang proses mental dalam pemerolehan dan penggunaan bahasa",
-                    "Kajian tentang sejarah perkembangan bahasa"
-                ],
-                answer: "Kajian tentang proses mental dalam pemerolehan dan penggunaan bahasa",
-                explanation: "Psikolinguistik adalah bidang interdisipliner yang mengkaji proses kognitif dan mental yang terlibat dalam pemerolehan, pemahaman, dan penghasilan bahasa."
-            },
-            {
-                question: "Teori mana yang mencadangkan bahawa manusia dilahirkan dengan kebolehan semula jadi untuk mempelajari bahasa?",
-                options: [
-                    "Teori Behavioris",
-                    "Teori Interaksionis",
-                    "Teori Nativis",
-                    "Teori Kognitif"
-                ],
-                answer: "Teori Nativis",
-                explanation: "Teori Nativis yang diusulkan oleh Noam Chomsky mencadangkan bahawa manusia mempunyai peranti pemerolehan bahasa (LAD) yang semula jadi."
-            },
-            {
-                question: "Apakah yang dimaksudkan dengan 'pemerolehan bahasa'?",
-                options: [
-                    "Proses pembelajaran bahasa secara formal di sekolah",
-                    "Proses semula jadi penguasaan bahasa tanpa pengajaran formal",
-                    "Kajian tentang sejarah perkembangan bahasa",
-                    "Teknik mengajar bahasa kedua"
-                ],
-                answer: "Proses semula jadi penguasaan bahasa tanpa pengajaran formal",
-                explanation: "Pemerolehan bahasa merujuk kepada proses semula jadi di mana kanak-kanak mempelajari bahasa ibunda mereka tanpa pengajaran formal."
-            },
-            {
-                question: "Faktor utama yang mempengaruhi pemerolehan bahasa kedua ialah:",
-                options: [
-                    "Umur, motivasi, dan pendedahan bahasa",
-                    "Jantina, bangsa, dan agama",
-                    "Status sosioekonomi dan lokasi geografi",
-                    "Semua di atas"
-                ],
-                answer: "Umur, motivasi, dan pendedahan bahasa",
-                explanation: "Kajian menunjukkan umur, motivasi, dan pendedahan bahasa adalah faktor utama yang mempengaruhi kejayaan pemerolehan bahasa kedua."
-            },
-            {
-                question: "Apakah perbezaan utama antara pemerolehan bahasa pertama dan kedua?",
-                options: [
-                    "Pemerolehan bahasa pertama lebih cepat daripada kedua",
-                    "Pemerolehan bahasa pertama berlaku secara semula jadi, manakala kedua memerlukan pengajaran formal",
-                    "Tidak ada perbezaan yang ketara",
-                    "Pemerolehan bahasa kedua hanya berlaku pada kanak-kanak"
-                ],
-                answer: "Proses semula jadi penguasaan bahasa tanpa pengajaran formal",
-                explanation: "Pemerolehan bahasa pertama berlaku secara semula jadi dalam persekitaran bahasa, manakala pemerolehan bahasa kedua biasanya melibatkan pembelajaran secara sedar dan pengajaran formal."
-            }
-        ];
-
-let currentQuizQuestion = 0;
-        let quizScore = 0;
-        let quizStudentName = '';
-
-function startExampleQuiz() {
-            quizStudentName = document.getElementById('quiz-studentName').value;
-            if (!quizStudentName) {
-                alert("Sila masukkan nama anda");
-                return;
-            }
-            document.getElementById('quiz-start-container').style.display = 'none';
-            document.getElementById('quiz-quiz-container').style.display = 'block';
-            currentQuizQuestion = 0;
-            quizScore = 0;
-            document.getElementById('total-questions').textContent = quizData.length;
-            loadQuizQuestion();
+// --- FUNGSI-FUNGSI UNTUK CONTOH KUIZ INTERAKTIF ---
+    // Data kuiz contoh
+    const quizData = [
+        {
+            question: "Apakah definisi psikolinguistik yang paling tepat?",
+            options: [
+                "Kajian tentang hubungan antara bahasa dan budaya",
+                "Kajian tentang struktur bahasa formal",
+                "Kajian tentang proses mental dalam pemerolehan dan penggunaan bahasa",
+                "Kajian tentang sejarah perkembangan bahasa"
+            ],
+            answer: "Kajian tentang proses mental dalam pemerolehan dan penggunaan bahasa",
+            explanation: "Psikolinguistik adalah bidang interdisipliner yang mengkaji proses kognitif dan mental yang terlibat dalam pemerolehan, pemahaman, dan penghasilan bahasa."
+        },
+        {
+            question: "Teori mana yang mencadangkan bahawa manusia dilahirkan dengan kebolehan semula jadi untuk mempelajari bahasa?",
+            options: [
+                "Teori Behavioris",
+                "Teori Interaksionis",
+                "Teori Nativis",
+                "Teori Kognitif"
+            ],
+            answer: "Teori Nativis",
+            explanation: "Teori Nativis yang diusulkan oleh Noam Chomsky mencadangkan bahawa manusia mempunyai peranti pemerolehan bahasa (LAD) yang semula jadi."
+        },
+        {
+            question: "Apakah yang dimaksudkan dengan 'pemerolehan bahasa'?",
+            options: [
+                "Proses pembelajaran bahasa secara formal di sekolah",
+                "Proses semula jadi penguasaan bahasa tanpa pengajaran formal",
+                "Kajian tentang sejarah perkembangan bahasa",
+                "Teknik mengajar bahasa kedua"
+            ],
+            answer: "Proses semula jadi penguasaan bahasa tanpa pengajaran formal",
+            explanation: "Pemerolehan bahasa merujuk kepada proses semula jadi di mana kanak-kanak mempelajari bahasa ibunda mereka tanpa pengajaran formal."
+        },
+        {
+            question: "Faktor utama yang mempengaruhi pemerolehan bahasa kedua ialah:",
+            options: [
+                "Umur, motivasi, dan pendedahan bahasa",
+                "Jantina, bangsa, dan agama",
+                "Status sosioekonomi dan lokasi geografi",
+                "Semua di atas"
+            ],
+            answer: "Umur, motivasi, dan pendedahan bahasa",
+            explanation: "Kajian menunjukkan umur, motivasi, dan pendedahan bahasa adalah faktor utama yang mempengaruhi kejayaan pemerolehan bahasa kedua."
+        },
+        {
+            question: "Apakah perbezaan utama antara pemerolehan bahasa pertama dan kedua?",
+            options: [
+                "Pemerolehan bahasa pertama lebih cepat daripada kedua",
+                "Pemerolehan bahasa pertama berlaku secara semula jadi, manakala kedua memerlukan pengajaran formal",
+                "Tidak ada perbezaan yang ketara",
+                "Pemerolehan bahasa kedua hanya berlaku pada kanak-kanak"
+            ],
+            answer: "Pemerolehan bahasa pertama berlaku secara semula jadi, manakala kedua memerlukan pengajaran formal",
+            explanation: "Pemerolehan bahasa pertama berlaku secara semula jadi dalam persekitaran bahasa, manakala pemerolehan bahasa kedua biasanya melibatkan pembelajaran secara sedar dan pengajaran formal."
         }
+    ];
 
-function loadQuizQuestion() {
-            const q = quizData[currentQuizQuestion];
-            document.getElementById('current-question-num').textContent = currentQuizQuestion + 1;
-            document.getElementById('quiz-question').innerText = q.question;
-            const optionsDiv = document.getElementById('quiz-options');
-            optionsDiv.innerHTML = '';
-            document.getElementById('quiz-explanation').innerText = '';
+// Pemboleh ubah keadaan untuk kuiz contoh
+    let currentQuizQuestion = 0;
+    let quizScore = 0;
+    let quizStudentName = '';
+
+// Fungsi untuk memulakan kuiz contoh
+    function startExampleQuiz() {
+        quizStudentName = document.getElementById('quiz-studentName').value.trim();
+        if (!quizStudentName) {
+            alert("Sila masukkan nama anda");
+            return;
+        }
+        document.getElementById('quiz-start-container').style.display = 'none';
+        document.getElementById('quiz-quiz-container').style.display = 'block';
+        currentQuizQuestion = 0;
+        quizScore = 0;
+        document.getElementById('total-questions').textContent = quizData.length;
+        loadQuizQuestion();
+    }
+
+// Fungsi untuk memuatkan soalan semasa dalam kuiz contoh
+    function loadQuizQuestion() {
+        const q = quizData[currentQuizQuestion];
+        document.getElementById('current-question-num').textContent = currentQuizQuestion + 1;
+        document.getElementById('quiz-question').textContent = q.question; // Gunakan textContent
+        const optionsDiv = document.getElementById('quiz-options');
+        optionsDiv.innerHTML = ''; // Kosongkan pilihan sebelumnya
+        document.getElementById('quiz-explanation').textContent = ''; // Kosongkan penjelasan sebelumnya
 
 q.options.forEach(option => {
-                const btn = document.createElement('button');
-                btn.innerText = option;
-                btn.onclick = () => checkQuizAnswer(option);
-                optionsDiv.appendChild(btn);
-            });
+            const btn = document.createElement('button');
+            btn.textContent = option; // Gunakan textContent
+            btn.onclick = () => checkQuizAnswer(option);
+            optionsDiv.appendChild(btn);
+        });
+
+// Kemas kini keadaan butang navigasi
+        document.getElementById('prev-btn').disabled = (currentQuizQuestion === 0);
+        const nextButton = document.getElementById('next-btn');
+        if (currentQuizQuestion === quizData.length - 1) {
+            nextButton.textContent = "Tamam";
+            nextButton.classList.add('quiz-end');
+        } else {
+            nextButton.textContent = "Seterusnya";
+            nextButton.classList.remove('quiz-end');
+        }
+    }
+
+// Fungsi untuk memeriksa jawapan dalam kuiz contoh
+    function checkQuizAnswer(selected) {
+        // Elakkan jawapan berulang untuk soalan yang sama
+        if (document.getElementById('quiz-explanation').textContent !== '') {
+             return;
         }
 
-function checkQuizAnswer(selected) {
-            playClickSound();
-            const q = quizData[currentQuizQuestion];
-            const isCorrect = selected === q.answer;
-            document.getElementById('quiz-explanation').innerText = isCorrect 
-                ? "✔ Jawapan Betul! " + q.explanation 
-                : "✘ Jawapan Salah. " + q.explanation;
+playClickSound();
+        const q = quizData[currentQuizQuestion];
+        const isCorrect = selected === q.answer;
+        const explanationElement = document.getElementById('quiz-explanation');
+        // Papar penjelasan dengan penunjuk betul/salah
+        explanationElement.textContent = (isCorrect ? "✔ Jawapan Betul! " : "✘ Jawapan Salah. ") + q.explanation;
+        explanationElement.style.backgroundColor = isCorrect ? '#c8e6c9' : '#ffcdd2'; // Hijau muda / Merah muda
 
 if (isCorrect) {
-                quizScore++;
-                playCorrectSound();
-            } else {
-                playWrongSound();
-            }
+            quizScore++; // Naikkan skor hanya sekali
+            playCorrectSound();
+        } else {
+            playWrongSound();
         }
+        // Lumpuhkan butang pilihan selepas menjawab
+        const optionButtons = document.querySelectorAll('#quiz-options button');
+        optionButtons.forEach(button => button.disabled = true);
+    }
 
-function nextQuizQuestion() {
-            if (currentQuizQuestion < quizData.length - 1) {
-                currentQuizQuestion++;
-                loadQuizQuestion();
-            } else {
-                endExampleQuiz();
-            }
+// Fungsi untuk soalan seterusnya dalam kuiz contoh
+    function nextQuizQuestion() {
+         // Pastikan pelajar telah menjawab sebelum boleh ke soalan seterusnya
+        if (document.getElementById('quiz-explanation').textContent === '') {
+             alert("Sila pilih satu jawapan terlebih dahulu.");
+             return;
         }
-
-function prevQuizQuestion() {
-            if (currentQuizQuestion > 0) {
-                currentQuizQuestion--;
-                loadQuizQuestion();
-            }
+        if (currentQuizQuestion < quizData.length - 1) {
+            currentQuizQuestion++;
+            loadQuizQuestion();
+        } else {
+            endExampleQuiz();
         }
+    }
 
-function endExampleQuiz() {
-            document.getElementById('quiz-quiz-container').style.display = 'none';
-            document.getElementById('quiz-certificate').style.display = 'block';
-            document.getElementById('quiz-certName').innerText = quizStudentName;
-            document.getElementById('quiz-scoreDisplay').innerText = `${quizScore}/${quizData.length}`;
-
-const percent = (quizScore / quizData.length) * 100;
-            let grade, motivasi;
-
-if (percent >= 90) {
-                grade = "Cemerlang";
-                motivasi = "Tahniah! Anda menunjukkan penguasaan yang sangat baik!";
-            } else if (percent >= 70) {
-                grade = "Sangat Baik";
-                motivasi = "Teruskan usaha anda. Pencapaian anda sangat membanggakan!";
-            } else if (percent >= 50) {
-                grade = "Lulus";
-                motivasi = "Anda lulus, tetapi masih ada ruang untuk penambahbaikan.";
-            } else {
-                grade = "Perlu Semakan";
-                motivasi = "Jangan putus asa! Teruskan ulang kaji dan cuba lagi.";
-            }
-
-document.getElementById('quiz-grade').innerText = grade;
-            document.getElementById('quiz-motivasi').innerText = motivasi;
+// Fungsi untuk soalan sebelumnya dalam kuiz contoh
+    function prevQuizQuestion() {
+        if (currentQuizQuestion > 0) {
+            currentQuizQuestion--;
+            loadQuizQuestion();
         }
+    }
 
-function sendExampleWhatsApp() {
-            const guruPhone = document.getElementById('guru-phone').value.trim();
-            if (!guruPhone) {
-                alert("Sila masukkan nombor guru dalam penjana terlebih dahulu");
-                return;
-            }
-
-const phone = `60${guruPhone}`;
-            const msg = `Nama Pelajar: ${quizStudentName}%0AKursus: Psikolinguistik%0ATopik: Pemerolehan Bahasa Kedua%0ASkor: ${quizScore}/${quizData.length}%0AGred: ${document.getElementById('quiz-grade').innerText}%0ATarikh: ${new Date().toLocaleDateString()}`;
-            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+// Fungsi untuk menamatkan kuiz contoh dan paparkan sijil
+    function endExampleQuiz() {
+        document.getElementById('quiz-quiz-container').style.display = 'none';
+        document.getElementById('quiz-certificate').style.display = 'block';
+        document.getElementById('quiz-certName').textContent = quizStudentName; // Gunakan textContent
+        document.getElementById('quiz-scoreDisplay').textContent = `${quizScore}/${quizData.length}`;
+        const percent = (quizScore / quizData.length) * 100;
+        let grade, motivasi;
+        if (percent >= 90) {
+            grade = "Cemerlang";
+            motivasi = "Tahniah! Anda menunjukkan penguasaan yang sangat baik!";
+        } else if (percent >= 70) {
+            grade = "Sangat Baik";
+            motivasi = "Teruskan usaha anda. Pencapaian anda sangat membanggakan!";
+        } else if (percent >= 50) {
+            grade = "Lulus";
+            motivasi = "Anda lulus, tetapi masih ada ruang untuk penambahbaikan.";
+        } else {
+            grade = "Perlu Semakan";
+            motivasi = "Jangan putus asa! Teruskan ulang kaji dan cuba lagi.";
         }
+        document.getElementById('quiz-grade').textContent = grade; // Gunakan textContent
+        document.getElementById('quiz-motivasi').textContent = motivasi; // Gunakan textContent
+    }
 
-function sendExampleToGoogleSheet() {
-            const googleScript = document.getElementById('google-script').value.trim();
-            if (!googleScript) {
-                alert("Sila masukkan URL Google Script dalam penjana");
-                return;
-            }
-
-const data = { 
-                name: quizStudentName,
-                score: quizScore,
-                grade: document.getElementById('quiz-grade').innerText,
-                date: new Date().toLocaleDateString(),
-                course: "Psikolinguistik",
-                topic: "Pemerolehan Bahasa Kedua"
-            };
-
-fetch(googleScript, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            }).then(() => alert('Data dihantar ke Google Sheet'));
+// Fungsi untuk menghantar keputusan kuiz contoh melalui WhatsApp
+    function sendExampleWhatsApp() {
+        const guruPhoneInput = document.getElementById('guru-phone');
+        let guruPhone = '';
+        if (guruPhoneInput) {
+             guruPhone = guruPhoneInput.value.trim();
         }
-    </script>
+        if (!guruPhone && !confirm("Nombor guru tidak dijumpai dalam penjana. Teruskan dengan nombor dummy?")) {
+            return;
+        }
+        const phone = guruPhone ? `60${guruPhone}` : '60123456789'; // Nombor dummy
+        const msg = encodeURIComponent(
+            `Nama Program: ${quizProgrammeName}
+` +
+            `Nama Pelajar: ${quizStudentName}
+` +
+            `Kursus: Psikolinguistik
+` +
+            `Topik: Pemerolehan Bahasa Kedua
+` +
+            `Skor: ${quizScore}/${quizData.length}
+` +
+            `Gred: ${document.getElementById('quiz-grade').textContent}
+` +
+            `Tarikh: ${new Date().toLocaleDateString()}`
+        );
+        window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+    }
+
+// Fungsi untuk menghantar keputusan kuiz contoh ke Google Sheet
+    function sendExampleToGoogleSheet() {
+        const googleScriptInput = document.getElementById('google-script');
+        let googleScript = '';
+        if (googleScriptInput) {
+             googleScript = googleScriptInput.value.trim();
+        }
+        if (!googleScript) {
+             alert("Ralat: URL Google Script tidak tersedia.");
+             return;
+        }
+        const data = {
+            program: quizProgrammeName,
+            name: quizStudentName,
+            score: quizScore,
+            grade: document.getElementById('quiz-grade').textContent,
+            date: new Date().toLocaleDateString(),
+            course: "Psikolinguistik",
+            topic: "Pemerolehan Bahasa Kedua"
+        };
+        // Nota: mode 'no-cors' mempunyai had - tidak akan menerima respons dari server.
+        // Ia hanya memastikan permintaan dihantar. Untuk maklum balas, perlu CORS yang betul di server.
+        fetch(googleScript, {
+            method: 'POST',
+            mode: 'no-cors', // Had: Tiada akses kepada respons
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(() => {
+             alert('Data dihantar ke Google Sheet');
+             console.log("Permintaan POST dihantar ke Google Script:", data);
+        }).catch((error) => {
+             console.error('Ralat menghantar data ke Google Sheet:', error);
+             alert('Ralat berlaku semasa menghantar data. Sila semak URL Google Script.');
+        });
+    }
+
+// Pastikan tab 'Penjana Prompt' aktif apabila halaman dimuatkan
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Kerana tab 'generator' sudah ditetapkan sebagai aktif dalam HTML,
+        // kita hanya perlu memastikan keadaan awal kuiz adalah betul.
+        resetQuiz(); 
+    });
+</script>
+
 </body>
 </html>
