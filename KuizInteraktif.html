@@ -841,6 +841,182 @@ function doGet(e) {
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
+    // Data untuk kursus yang berbeza
+const kursusData = {
+    nahu: {
+        nama: 'Nahu',
+        topik: ['Mubtada', 'Khabar', 'Isim Majrur', 'Fail']
+    },
+    sarf: {
+        nama: 'Sarf',
+        topik: ['Fi\'il Madi', 'Fi\'il Mudari\'', 'Fi\'il Amr', 'Masdar']
+    },
+    balaghah: {
+        nama: 'Balaghah',
+        topik: ['Tasybih', 'Majaz', 'Kinayah', 'Isti\'arah']
+    }
+};
+
+// Fungsi untuk menetapkan kursus dan topik
+function setKursusTopic(kursusKey, topikIndex, nama, skor, gred) {
+    const kursus = kursusData[kursusKey];
+    
+    setSijilData(
+        nama,
+        kursus.nama,
+        kursus.topik[topikIndex],
+        skor,
+        gred,
+        generateMotivasi(skor)
+    );
+}
+
+// Contoh penggunaan
+setKursusTopic('nahu', 0, 'Ahmad bin Ali', '85/100', 'A');
+Dengan cara ini, sijil menjadi lebih fleksibel dan boleh digunakan untuk pelbagai kursus dan topik yang berbeza secara dinamik.RetryClaude does not have the ability to run the code it generates yet.RAdakah alternatif dengan Objek Data sesuai dengan google sheetEditYa, alternatif dengan Objek Data sangat sesuai dengan Google Sheets! Berikut adalah beberapa pendekatan yang boleh digunakan:
+1. Menggunakan Google Apps Script
+Kod di Google Sheets (Apps Script)
+javascriptfunction getDataSijil() {
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const lastRow = sheet.getLastRow();
+  
+  // Mengambil data dari baris terakhir (data terkini)
+  const data = {
+    nama: sheet.getRange(lastRow, 1).getValue(),      // Kolom A
+    kursus: sheet.getRange(lastRow, 2).getValue(),    // Kolom B  
+    topik: sheet.getRange(lastRow, 3).getValue(),     // Kolom C
+    skor: sheet.getRange(lastRow, 4).getValue(),      // Kolom D
+    gred: sheet.getRange(lastRow, 5).getValue(),      // Kolom E
+    motivasi: sheet.getRange(lastRow, 6).getValue()   // Kolom F
+  };
+  
+  return data;
+}
+
+// Fungsi untuk dipublish sebagai web app
+function doGet() {
+  const data = getDataSijil();
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+2. Struktur Google Sheets
+A (Nama)B (Kursus)C (Topik)D (Skor)E (Gred)F (Motivasi)Ahmad bin AliNahuMubtada85/100ATahniah! Prestasi cemerlang!Fatimah binti OmarSarfFi'il Madi78/100B+Bagus! Teruskan usaha!
+3. Kod JavaScript untuk Website
+javascript// URL web app Google Apps Script yang telah dipublish
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+// Fungsi untuk mengambil data dari Google Sheets
+async function getDataFromGoogleSheets() {
+    try {
+        const response = await fetch(GOOGLE_SCRIPT_URL);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+}
+
+// Fungsi untuk populate sijil dengan data dari Google Sheets
+async function populateSijilFromSheets() {
+    const data = await getDataFromGoogleSheets();
+    
+    if (data) {
+        populateSijil(data);
+    } else {
+        console.error('Tidak dapat mengambil data dari Google Sheets');
+    }
+}
+
+// Fungsi populate sijil (sama seperti sebelum ini)
+function populateSijil(data) {
+    const mapping = {
+        nama: 'quiz-certName',
+        kursus: 'quiz-course', 
+        topik: 'quiz-topic',
+        skor: 'quiz-scoreDisplay',
+        gred: 'quiz-grade',
+        motivasi: 'quiz-motivasi'
+    };
+    
+    Object.keys(mapping).forEach(key => {
+        const element = document.getElementById(mapping[key]);
+        if (element && data[key]) {
+            element.textContent = data[key];
+        }
+    });
+}
+
+// Panggil fungsi apabila halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    populateSijilFromSheets();
+});
+4. Alternatif dengan Google Sheets API
+javascript// Menggunakan Google Sheets API v4
+const API_KEY = 'YOUR_API_KEY';
+const SHEET_ID = 'YOUR_SHEET_ID';
+const RANGE = 'Sheet1!A:F'; // Kolom A hingga F
+
+async function getDataFromSheetsAPI() {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+    
+    try {
+        const response = await fetch(url);
+        const result = await response.json();
+        const rows = result.values;
+        
+        if (rows.length > 1) {
+            // Ambil data dari baris terakhir
+            const lastRow = rows[rows.length - 1];
+            
+            return {
+                nama: lastRow[0],
+                kursus: lastRow[1], 
+                topik: lastRow[2],
+                skor: lastRow[3],
+                gred: lastRow[4],
+                motivasi: lastRow[5]
+            };
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
+}
+5. Fungsi untuk Mengambil Data Berdasarkan Nama
+javascript// Google Apps Script - mengambil data berdasarkan nama
+function getDataByName(nama) {
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const data = sheet.getDataRange().getValues();
+  
+  // Cari baris yang mengandungi nama tersebut
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === nama) {
+      return {
+        nama: data[i][0],
+        kursus: data[i][1],
+        topik: data[i][2], 
+        skor: data[i][3],
+        gred: data[i][4],
+        motivasi: data[i][5]
+      };
+    }
+  }
+  
+  return null; // Jika nama tidak dijumpai
+}
+
+// Untuk dipanggil dari website
+function doGet(e) {
+  const nama = e.parameter.nama;
+  const data = nama ? getDataByName(nama) : getDataSijil();
+  
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 // Fungsi untuk menghantar keputusan kuiz contoh melalui WhatsApp
     function sendExampleWhatsApp() {
         const guruPhoneInput = document.getElementById('guru-phone');
