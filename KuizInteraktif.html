@@ -195,11 +195,15 @@
         <form id="prompt-form">
             <div class="form-group">
                 <label for="Program">Program:</label>
-                <input type="text" id="Program" placeholder="e.g., Diploma Sains Komputer" required>
+                <input type="text" id="Program" placeholder="e.g., Diploma Bahasa Arab" required>
             </div>
             <div class="form-group">
                 <label for="Kursus">Kursus:</label>
-                <input type="text" id="Kursus" placeholder="e.g., Pengaturcaraan Web" required>
+                <input type="text" id="Kursus" placeholder="e.g., Nahu" required>
+            </div>
+            <div class="form-group">
+                <label for="Topik">Topik:</label>
+                <input type="text" id="Topik" placeholder="e.g., Mubtada" required>
             </div>
             <div class="form-group">
                 <label for="jumlah">Bilangan Soalan (default 10):</label>
@@ -234,8 +238,7 @@
             <h3>Prompt Kuiz Anda:</h3>
             <div id="prompt-content"></div>
             <button type="button" id="copy-btn">Salin Prompt</button>
-            <button type="button" id="whatsapp-btn">Hantar ke Guru (WhatsApp)</button>
-        </div>
+            </div>
     </div>
 
 <!-- Tab Content: Quiz Example -->
@@ -450,6 +453,8 @@
 - Gunakan URL: ${googleScript || '[URL_GOOGLE_SCRIPT]'}
 - Data yang dihantar:
   Program: [program]
+  Kursus: [kursus]
+  Topik: [topik]
   Nama: [nama]
   Skor: [skor]
   Gred: [gred]
@@ -816,9 +821,9 @@ if (isCorrect) {
 ` +
             `Nama Pelajar: ${quizStudentName}
 ` +
-            `Kursus: Psikolinguistik
+            `Kursus: ${courseName}
 ` +
-            `Topik: Pemerolehan Bahasa Kedua
+            `Topik: ${topicName}
 ` +
             `Skor: ${quizScore}/${quizData.length}
 ` +
@@ -842,12 +847,12 @@ if (isCorrect) {
         }
         const data = {
             program: quizProgrammeName,
+            course: quizcoursename,
+            topic: quiztopicname,
             name: quizStudentName,
             score: quizScore,
             grade: document.getElementById('quiz-grade').textContent,
-            date: new Date().toLocaleDateString(),
-            course: "Psikolinguistik",
-            topic: "Pemerolehan Bahasa Kedua"
+            date: new Date().toLocaleDateString()            
         };
         // Nota: mode 'no-cors' mempunyai had - tidak akan menerima respons dari server.
         // Ia hanya memastikan permintaan dihantar. Untuk maklum balas, perlu CORS yang betul di server.
