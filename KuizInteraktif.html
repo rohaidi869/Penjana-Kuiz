@@ -263,12 +263,12 @@
 <div id="quiz-certificate">
             <h2>Sijil Prestasi</h2>
             <p>Nama: <span id="quiz-certName"></span></p>
-            <p>Kursus: Psikolinguistik</p>
-            <p>Topik: Pemerolehan Bahasa Kedua</p>
+            <p>Kursus: <span id="quiz-course"></span></p>
+            <p>Topik: <span id="quiz-topic"></span></p>
             <p>Skor: <span id="quiz-scoreDisplay"></span></p>
             <p>Gred: <span id="quiz-grade"></span></p>
             <p><span id="quiz-motivasi"></span></p>
-            <button onclick="sendExampleWhatsApp()">Hantar ke Guru (WhatsApp)</button>
+             <button onclick="sendExampleWhatsApp()">Hantar ke Guru (WhatsApp)</button>
             <button onclick="sendExampleToGoogleSheet()">Hantar ke Google Sheet</button>
             <button onclick="resetQuiz()">Cuba Lagi</button>
         </div>
@@ -801,6 +801,46 @@ if (isCorrect) {
         document.getElementById('quiz-motivasi').textContent = motivasi; // Gunakan textContent
     }
 
+    // Fungsi untuk menetapkan maklumat sijil
+  function setSijilData(nama, kursus, topik, skor, gred, motivasi) {
+    document.getElementById('quiz-certName').textContent = nama;
+    document.getElementById('quiz-course').textContent = kursus;
+    document.getElementById('quiz-topic').textContent = topik;
+    document.getElementById('quiz-scoreDisplay').textContent = skor;
+    document.getElementById('quiz-grade').textContent = gred;
+    document.getElementById('quiz-motivasi').textContent = motivasi;
+}
+// Google Apps Script - mengambil data berdasarkan nama
+function getDataByName(nama) {
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const data = sheet.getDataRange().getValues();
+  
+  // Cari baris yang mengandungi nama tersebut
+  for (let i = 1; i < data.length; i++) {
+    if (data[i][0] === nama) {
+      return {
+        nama: data[i][0],
+        kursus: data[i][1],
+        topik: data[i][2], 
+        skor: data[i][3],
+        gred: data[i][4],
+        motivasi: data[i][5]
+      };
+    }
+  }
+  
+  return null; // Jika nama tidak dijumpai
+}
+
+// Untuk dipanggil dari website
+function doGet(e) {
+  const nama = e.parameter.nama;
+  const data = nama ? getDataByName(nama) : getDataSijil();
+  
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}
 // Fungsi untuk menghantar keputusan kuiz contoh melalui WhatsApp
     function sendExampleWhatsApp() {
         const guruPhoneInput = document.getElementById('guru-phone');
