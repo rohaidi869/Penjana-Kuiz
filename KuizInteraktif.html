@@ -1,4 +1,3 @@
-Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini kepada json prompt
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -177,6 +176,11 @@ Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini ke
     #next-btn.quiz-end:hover {
         background-color: #218838;
     }
+    .error-message {
+        color: #dc3545;
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
 </style>
 </head>
 <body>
@@ -224,7 +228,8 @@ Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini ke
             </div>
             <div class="form-group">
                 <label for="google-script">URL Google Script Web App:</label>
-                <input type="text" id="google-script" placeholder="  https://script.google.com/macros/s/...  ">
+                <input type="text" id="google-script" placeholder="https://script.google.com/macros/s/...">
+                <div class="error-message">Pastikan Web App dikonfigurasi: Execute as 'Me', Who has access 'Anyone'.</div>
             </div>
             <button type="button" onclick="hasilkanPrompt()">Jana Prompt</button>
         </form>
@@ -320,32 +325,89 @@ Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini ke
         document.getElementById('quiz-explanation').textContent = '';
     }
 
-// Fungsi untuk memainkan bunyi klik (mungkin gagal kerana CORS)
+
+    // ===== AUDIO HANDLING (Improved) =====
+    // Preload sounds to potentially reduce CORS issues and latency
+    let clickSound, correctSound, wrongSound;
+
+    function preloadSounds() {
+        // Use fetch to load audio data, then create Audio objects
+        // This might help with some CORS issues if the server allows it.
+        fetch('https://freesound.org/data/previews/171/171671_2437358-lq.mp3')
+            .then(response => response.blob())
+            .then(blob => {
+                clickSound = new Audio(URL.createObjectURL(blob));
+                console.log("Bunyi klik dimuatkan.");
+            })
+            .catch(e => console.warn("Gagal memuatkan bunyi klik:", e));
+
+        fetch('https://freesound.org/data/previews/320/320181_5260875-lq.mp3')
+            .then(response => response.blob())
+            .then(blob => {
+                correctSound = new Audio(URL.createObjectURL(blob));
+                console.log("Bunyi betul dimuatkan.");
+            })
+            .catch(e => console.warn("Gagal memuatkan bunyi betul:", e));
+
+        fetch('https://freesound.org/data/previews/256/256113_3263906-lq.mp3')
+            .then(response => response.blob())
+            .then(blob => {
+                wrongSound = new Audio(URL.createObjectURL(blob));
+                console.log("Bunyi salah dimuatkan.");
+            })
+            .catch(e => console.warn("Gagal memuatkan bunyi salah:", e));
+    }
+
+    // Fungsi untuk memainkan bunyi klik (mungkin gagal kerana CORS)
     function playClickSound() {
-        const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3  ');
-        audio.play().catch((e) => {
-            console.error("Bunyi klik gagal dimainkan:", e);
-            // Bunyi tidak dimainkan, teruskan sahaja
-        });
+        if (clickSound) {
+            clickSound.currentTime = 0; // Reset to start
+            clickSound.play().catch((e) => {
+                console.error("Bunyi klik gagal dimainkan:", e);
+            });
+        } else {
+            // Fallback if preload failed
+            const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
+            audio.play().catch((e) => {
+                console.error("Bunyi klik gagal dimainkan (fallback):", e);
+            });
+        }
     }
 
-// Fungsi untuk memainkan bunyi jawapan betul (mungkin gagal kerana CORS)
+    // Fungsi untuk memainkan bunyi jawapan betul (mungkin gagal kerana CORS)
     function playCorrectSound() {
-        const audio = new Audio('https://freesound.org/data/previews/320/320181_5260875-lq.mp3  ');
-        audio.play().catch((e) => {
-             console.error("Bunyi betul gagal dimainkan:", e);
-             // Bunyi tidak dimainkan, teruskan sahaja
-        });
+        if (correctSound) {
+            correctSound.currentTime = 0;
+            correctSound.play().catch((e) => {
+                 console.error("Bunyi betul gagal dimainkan:", e);
+            });
+        } else {
+            // Fallback if preload failed
+            const audio = new Audio('https://freesound.org/data/previews/320/320181_5260875-lq.mp3');
+            audio.play().catch((e) => {
+                 console.error("Bunyi betul gagal dimainkan (fallback):", e);
+            });
+        }
     }
 
-// Fungsi untuk memainkan bunyi jawapan salah (mungkin gagal kerana CORS)
+    // Fungsi untuk memainkan bunyi jawapan salah (mungkin gagal kerana CORS)
     function playWrongSound() {
-        const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3  ');
-        audio.play().catch((e) => {
-             console.error("Bunyi salah gagal dimainkan:", e);
-             // Bunyi tidak dimainkan, teruskan sahaja
-        });
+        if (wrongSound) {
+            wrongSound.currentTime = 0;
+            wrongSound.play().catch((e) => {
+                 console.error("Bunyi salah gagal dimainkan:", e);
+            });
+        } else {
+            // Fallback if preload failed
+            const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3');
+            audio.play().catch((e) => {
+                 console.error("Bunyi salah gagal dimainkan (fallback):", e);
+            });
+        }
     }
+
+    // Preload sounds when the page loads
+    window.addEventListener('load', preloadSounds);
 
 // ===== FUNGSI PENJANA PROMPT =====
     function hasilkanPrompt() {
@@ -359,7 +421,7 @@ Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini ke
         const guruPhone = document.getElementById('guru-phone').value.trim();
         const googleScript = document.getElementById('google-script').value.trim();
 
-// Validasi input wajib (HTML5 'required' juga membantu)
+        // Validasi input wajib (HTML5 'required' juga membantu)
         if (!Program) {
             alert("Sila masukkan nama Program!");
             document.getElementById('Program').focus();
@@ -371,13 +433,13 @@ Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini ke
             return;
         }
 
-// Tampilkan loading
+        // Tampilkan loading
         document.getElementById('loading').style.display = 'block';
         document.getElementById('output').style.display = 'none'; // Sembunyikan output sebelumnya
         document.getElementById('copy-btn').style.display = 'none';
         document.getElementById('whatsapp-btn').style.display = 'none';
 
-// Jika jumlah kosong, guna 10
+        // Jika jumlah kosong, guna 10
         if (jumlah === '') {
             jumlah = '10';
         }
@@ -386,17 +448,17 @@ Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini ke
             topik = Kursus;
         }
 
-// Peta kod bahasa
+        // Peta kod bahasa
         const bahasaMap = {
             "AR": "Arab",
             "BM": "Bahasa Melayu",
             "BI": "Bahasa Inggeris"
         };
 
-// Format nombor WhatsApp (tanpa prefix)
+        // Format nombor WhatsApp (tanpa prefix)
         const formattedPhone = guruPhone;
 
-// Generate quizData example based on 'jumlah'
+        // Generate quizData example based on 'jumlah'
         let quizDataExample = `    {
         question: "Soalan 1 untuk topik ${topik} dalam ${bahasaMap[bahasa]}?",
         options: ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
@@ -413,10 +475,66 @@ Bolehkah kamu tukar prompt kuiz interaktif yang dijana dalam kod aplikasi ini ke
     }`;
         }
 
-// Bina prompt tanpa rujukan logo
-        let prompt = `Anda adalah seorang pembangun berpengalaman dalam mencipta sistem kuiz interaktif berasaskan web. Tugas anda ialah membangunkan dan menghasilkan kod HTML lengkap (termasuk CSS dan JavaScript) bagi kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Kuiz ini bertujuan menilai kefahaman pelajar terhadap topik yang diberi melalui soalan pelbagai aras kesukaran (fakta, aplikasi, analisis), dan menyediakan maklum balas serta gred automatik. Pelajar akan menghantar keputusan mereka kepada pensyarah melalui WhatsApp atau Google Sheet. Sila pastikan betul-betul prompt yang dihasilkan nanti mengikut spesifikasi dan kehendak fungsi kuiz dan menggunakan bahasa pilihan pada semua halaman mula, kuiz dan sijil. \n**SPESIFIKASI KUIZ:**\n- Program: ${Program}\n- Kursus: ${Kursus}\n- Topik: ${topik}\n- Bahasa: ${bahasaMap[bahasa]}\n- Bilangan Soalan: ${jumlah}\n- Format: Pilihan berganda (4 pilihan)\n- Google Script URL: ${googleScript || 'Tidak disediakan'}\n**KEHENDAK FUNGSI:**\n1. HTML lengkap dengan CSS dan JavaScript\n2. Tiga halaman:\n   - Halaman Mula (input nama program, nama topik , nama pelajar dan Arahan Menjawab)\n   - Halaman Kuiz (soalan, jawapan dan Keterangan jawapan)\n   - Halaman Sijil (paparan gred)\n3. Fungsi JavaScript:\n   - quizData = array objek soalan\n   - startQuiz(), loadQuestion(), checkAnswer()\n   - navigasi soalan (sebelum/seterus)\n   - sistem gred automatik\n   - fungsi hantar melalui WhatsApp\n   - fungsi hantar ke Google Sheet\n   - paparkan jawapan yang betul dan keterangan bagi jawapan yang betul akan dipaparkan di bawah pilihan jawapan sebelum pelajar berpindah ke soalan seterusnya\n   - Mainkan bunyi klik setiap kali pelajar memilih jawapan\n**FUNGSI WHATSAPP:**\n- Tambah butang "Hantar Jawapan" di halaman sijil\n- Butang ini akan membuka WhatsApp dengan nombor guru: ${formattedPhone ? '60' + formattedPhone : '[NOMBOR GURU]'}\n- Mesej WhatsApp mengandungi:\n  Nama Program: ${Program}\n  Nama Pelajar: [nama]\n  Kursus: ${Kursus}\n  Topik: ${topik}\n  Skor: [skor]/[jumlah soalan]\n  Gred: [gred]\n  Tarikh: [tarikh selesai]\n**FUNGSI GOOGLE SHEET:**\n- Tambah butang "Hantar ke Google Sheet" di halaman sijil\n- Gunakan URL: ${googleScript || '[URL_GOOGLE_SCRIPT]'}\n- Data yang dihantar:\n  Program: [program]\n  Kursus: [kursus]\n  Topik: [topik]\n  Nama Pelajar: [nama]\n  Skor: [skor]\n  Gred: [gred]\n  Tarikh: [tarikh selesai]\n\n**CONTOH STRUKTUR quizData (JavaScript Array of Objects):**\nconst quizData = [\n${quizDataExample}\n];\n\nSila pastikan semua fungsi yang dinyatakan di atas dilaksanakan sepenuhnya dan kod berfungsi dengan baik.`;
+        // Bina prompt dalam format teks biasa (lebih sesuai untuk AI generatif)
+        let prompt = `Anda adalah seorang pembangun berpengalaman dalam mencipta sistem kuiz interaktif berasaskan web. Tugas anda ialah membangunkan dan menghasilkan kod HTML lengkap (termasuk CSS dan JavaScript) bagi kuiz interaktif berdasarkan topik bagi Kursus yang diberikan. Kuiz ini bertujuan menilai kefahaman pelajar terhadap topik yang diberi melalui soalan pelbagai aras kesukaran (fakta, aplikasi, analisis), dan menyediakan maklum balas serta gred automatik. Pelajar akan menghantar keputusan mereka kepada pensyarah melalui WhatsApp atau Google Sheet. Sila pastikan betul-betul prompt yang dihasilkan nanti mengikut spesifikasi dan kehendak fungsi kuiz dan menggunakan bahasa pilihan pada semua halaman mula, kuiz dan sijil.
 
-document.getElementById('prompt-content').textContent = prompt;
+**SPESIFIKASI KUIZ:**
+- Program: ${Program}
+- Kursus: ${Kursus}
+- Topik: ${topik}
+- Bahasa: ${bahasaMap[bahasa]}
+- Bilangan Soalan: ${jumlah}
+- Format: Pilihan berganda (4 pilihan)
+- Google Script URL: ${googleScript || 'Tidak disediakan'}
+
+**KEHENDAK FUNGSI:**
+1. HTML lengkap dengan CSS dan JavaScript
+2. Tiga halaman:
+   - Halaman Mula (input nama program, nama topik , nama pelajar dan Arahan Menjawab)
+   - Halaman Kuiz (soalan, jawapan dan Keterangan jawapan)
+   - Halaman Sijil (paparan gred)
+3. Fungsi JavaScript:
+   - quizData = array objek soalan (lihat CONTOH STRUKTUR di bawah)
+   - startQuiz(), loadQuestion(), checkAnswer()
+   - navigasi soalan (sebelum/seterus)
+   - sistem gred automatik
+   - fungsi hantar melalui WhatsApp
+   - fungsi hantar ke Google Sheet
+   - paparkan jawapan yang betul dan keterangan bagi jawapan yang betul akan dipaparkan di bawah pilihan jawapan sebelum pelajar berpindah ke soalan seterusnya
+   - Mainkan bunyi klik setiap kali pelajar memilih jawapan
+
+**FUNGSI WHATSAPP:**
+- Tambah butang "Hantar Jawapan" di halaman sijil
+- Butang ini akan membuka WhatsApp dengan nombor guru: ${formattedPhone ? '60' + formattedPhone : '[NOMBOR GURU]'}
+- Mesej WhatsApp mengandungi:
+  Nama Program: ${Program}
+  Nama Pelajar: [nama]
+  Kursus: ${Kursus}
+  Topik: ${topik}
+  Skor: [skor]/[jumlah soalan]
+  Gred: [gred]
+  Tarikh: [tarikh selesai]
+
+**FUNGSI GOOGLE SHEET:**
+- Tambah butang "Hantar ke Google Sheet" di halaman sijil
+- Gunakan URL: ${googleScript || '[URL_GOOGLE_SCRIPT]'}
+- Data yang dihantar:
+  Program: [program]
+  Kursus: [kursus]
+  Topik: [topik]
+  Nama Pelajar: [nama]
+  Skor: [skor]
+  Gred: [gred]
+  Tarikh: [tarikh selesai]
+
+**CONTOH STRUKTUR quizData (JavaScript Array of Objects):**
+const quizData = [
+${quizDataExample}
+];
+
+Sila pastikan semua fungsi yang dinyatakan di atas dilaksanakan sepenuhnya dan kod berfungsi dengan baik.`;
+
+        document.getElementById('prompt-content').textContent = prompt;
         document.getElementById('loading').style.display = 'none';
         document.getElementById('output').style.display = 'block';
         document.getElementById('copy-btn').style.display = 'inline-block';
@@ -428,18 +546,24 @@ document.getElementById('prompt-content').textContent = prompt;
         }
     }
 
-function sendPromptWhatsApp(promptText, phoneNumber) {
+    function sendPromptWhatsApp(promptText, phoneNumber) {
+        // Basic validation
+        if (!phoneNumber || !/^\d+$/.test(phoneNumber)) {
+             alert("Nombor telefon tidak sah. Sila masukkan nombor sahaja tanpa 60.");
+             return;
+        }
         const encodedPrompt = encodeURIComponent(promptText);
-        const whatsappUrl = `https://wa.me/60  ${phoneNumber}?text=${encodedPrompt}`;
+        const whatsappUrl = `https://wa.me/60${phoneNumber}?text=${encodedPrompt}`;
         window.open(whatsappUrl, '_blank');
     }
 
-document.getElementById('copy-btn').addEventListener('click', function() {
+    document.getElementById('copy-btn').addEventListener('click', function() {
         const promptContent = document.getElementById('prompt-content').textContent;
         navigator.clipboard.writeText(promptContent).then(() => {
             alert('Prompt telah disalin ke clipboard!');
         }).catch(err => {
             console.error('Gagal menyalin prompt: ', err);
+            alert("Gagal menyalin. Sila cuba lagi atau salin secara manual.");
         });
     });
 
@@ -477,11 +601,11 @@ document.getElementById('copy-btn').addEventListener('click', function() {
         }
     ];
 
-let currentQuestionIndex = 0;
+    let currentQuestionIndex = 0;
     let userAnswers = [];
     let studentName = '';
 
-function startExampleQuiz() {
+    function startExampleQuiz() {
         studentName = document.getElementById('quiz-studentName').value.trim();
         if (!studentName) {
             alert("Sila masukkan nama anda untuk memulakan kuiz!");
@@ -494,45 +618,45 @@ function startExampleQuiz() {
         loadQuestion();
     }
 
-function loadQuestion() {
+    function loadQuestion() {
         const questionContainer = document.getElementById('quiz-question');
         const optionsContainer = document.getElementById('quiz-options');
         const explanationContainer = document.getElementById('quiz-explanation');
         const currentQuestionNum = document.getElementById('current-question-num');
 
-explanationContainer.textContent = ''; // Clear previous explanation
+        explanationContainer.textContent = ''; // Clear previous explanation
         optionsContainer.innerHTML = ''; // Clear previous options
 
-if (currentQuestionIndex < quizData.length) {
+        if (currentQuestionIndex < quizData.length) {
             const question = quizData[currentQuestionIndex];
             questionContainer.textContent = question.question;
             currentQuestionNum.textContent = currentQuestionIndex + 1;
 
-question.options.forEach(option => {
+            question.options.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option;
                 button.onclick = () => selectAnswer(option);
                 optionsContainer.appendChild(button);
             });
 
-// Disable buttons if already answered
+            // Disable buttons if already answered
             if (userAnswers[currentQuestionIndex]) {
                 disableOptions(true);
                 showExplanation(userAnswers[currentQuestionIndex].correct, question.explanation);
             }
 
-updateNavigationButtons();
+            updateNavigationButtons();
         } else {
             showCertificate();
         }
     }
 
-function selectAnswer(selectedOption) {
+    function selectAnswer(selectedOption) {
         playClickSound();
         const question = quizData[currentQuestionIndex];
         const isCorrect = (selectedOption === question.answer);
 
-userAnswers[currentQuestionIndex] = {
+        userAnswers[currentQuestionIndex] = {
             question: question.question,
             selected: selectedOption,
             correct: isCorrect,
@@ -540,11 +664,11 @@ userAnswers[currentQuestionIndex] = {
             explanation: question.explanation
         };
 
-disableOptions(true);
+        disableOptions(true);
         highlightSelectedOption(selectedOption, isCorrect);
         showExplanation(isCorrect, question.explanation);
 
-if (isCorrect) {
+        if (isCorrect) {
             playCorrectSound();
         } else {
             playWrongSound();
@@ -552,14 +676,14 @@ if (isCorrect) {
         updateNavigationButtons();
     }
 
-function disableOptions(disable) {
+    function disableOptions(disable) {
         const optionsButtons = document.querySelectorAll('#quiz-options button');
         optionsButtons.forEach(button => {
             button.disabled = disable;
         });
     }
 
-function highlightSelectedOption(selectedOption, isCorrect) {
+    function highlightSelectedOption(selectedOption, isCorrect) {
         const optionsButtons = document.querySelectorAll('#quiz-options button');
         optionsButtons.forEach(button => {
             if (button.textContent === selectedOption) {
@@ -572,13 +696,13 @@ function highlightSelectedOption(selectedOption, isCorrect) {
         });
     }
 
-function showExplanation(isCorrect, explanation) {
+    function showExplanation(isCorrect, explanation) {
         const explanationContainer = document.getElementById('quiz-explanation');
         explanationContainer.innerHTML = `<strong>${isCorrect ? 'Jawapan Tepat!' : 'Jawapan Salah.'}</strong><br>${explanation}`;
         explanationContainer.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da';
     }
 
-function updateNavigationButtons() {
+    function updateNavigationButtons() {
         document.getElementById('prev-btn').disabled = (currentQuestionIndex === 0);
         document.getElementById('next-btn').textContent = (currentQuestionIndex === quizData.length - 1 && userAnswers[currentQuestionIndex]) ? 'Tamam' : 'Seterusnya';
         if (currentQuestionIndex === quizData.length - 1 && userAnswers[currentQuestionIndex]) {
@@ -590,14 +714,14 @@ function updateNavigationButtons() {
         document.getElementById('next-btn').disabled = !userAnswers[currentQuestionIndex] && currentQuestionIndex < quizData.length;
     }
 
-function prevQuizQuestion() {
+    function prevQuizQuestion() {
         if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
             loadQuestion();
         }
     }
 
-function nextQuizQuestion() {
+    function nextQuizQuestion() {
         if (currentQuestionIndex < quizData.length - 1) {
             currentQuestionIndex++;
             loadQuestion();
@@ -606,7 +730,7 @@ function nextQuizQuestion() {
         }
     }
 
-function calculateScoreAndGrade() {
+    function calculateScoreAndGrade() {
         let score = 0;
         userAnswers.forEach(answer => {
             if (answer.correct) {
@@ -614,11 +738,11 @@ function calculateScoreAndGrade() {
             }
         });
 
-const percentage = (score / quizData.length) * 100;
+        const percentage = (score / quizData.length) * 100;
         let grade = '';
         let motivasi = '';
 
-if (percentage >= 90) {
+        if (percentage >= 90) {
             grade = 'A+';
             motivasi = 'Cemerlang! Anda seorang yang sangat berpengetahuan.';
         } else if (percentage >= 80) {
@@ -635,16 +759,16 @@ if (percentage >= 90) {
             motivasi = 'Teruskan belajar! Jangan putus asa.';
         }
 
-return { score, percentage, grade, motivasi };
+        return { score, percentage, grade, motivasi };
     }
 
-function showCertificate() {
+    function showCertificate() {
         document.getElementById('quiz-quiz-container').style.display = 'none';
         document.getElementById('quiz-certificate').style.display = 'block';
 
-const { score, percentage, grade, motivasi } = calculateScoreAndGrade();
+        const { score, percentage, grade, motivasi } = calculateScoreAndGrade();
 
-document.getElementById('quiz-certName').textContent = studentName;
+        document.getElementById('quiz-certName').textContent = studentName;
         document.getElementById('quiz-course').textContent = document.getElementById('Kursus').value || 'N/A'; // Use value from generator tab
         document.getElementById('quiz-topic').textContent = document.getElementById('topik').value || 'N/A'; // Use value from generator tab
         document.getElementById('quiz-scoreDisplay').textContent = `${score} / ${quizData.length} (${percentage.toFixed(2)}%)`;
@@ -652,7 +776,7 @@ document.getElementById('quiz-certName').textContent = studentName;
         document.getElementById('quiz-motivasi').textContent = motivasi;
     }
 
-function sendExampleWhatsApp() {
+    function sendExampleWhatsApp() {
         const { score, percentage, grade } = calculateScoreAndGrade();
         const guruPhone = document.getElementById('guru-phone').value.trim();
         const Program = document.getElementById('Program').value.trim();
@@ -660,12 +784,13 @@ function sendExampleWhatsApp() {
         const topik = document.getElementById('topik').value.trim();
         const currentDate = new Date().toLocaleDateString('ms-MY');
 
-if (!guruPhone) {
-            alert("Sila masukkan nombor WhatsApp guru di tab 'Penjana Prompt' untuk menghantar keputusan.");
+        // Basic validation
+        if (!guruPhone || !/^\d+$/.test(guruPhone)) {
+            alert("Sila masukkan nombor WhatsApp guru yang sah di tab 'Penjana Prompt' (tanpa 60).");
             return;
         }
 
-const message = `*Keputusan Kuiz:*
+        const message = `*Keputusan Kuiz:*
 Nama Pelajar: ${studentName}
 Program: ${Program}
 Kursus: ${Kursus}
@@ -674,25 +799,25 @@ Skor: ${score}/${quizData.length} (${percentage.toFixed(2)}%)
 Gred: ${grade}
 Tarikh: ${currentDate}`;
 
-const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/60  ${guruPhone}?text=${encodedMessage}`;
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/60${guruPhone}?text=${encodedMessage}`;
         window.open(whatsappUrl, '_blank');
     }
 
-function sendExampleToGoogleSheet() {
+    function sendExampleToGoogleSheet() {
         const googleScriptUrl = document.getElementById('google-script').value.trim();
         if (!googleScriptUrl) {
             alert("Sila masukkan URL Google Script Web App di tab 'Penjana Prompt' untuk menghantar keputusan.");
             return;
         }
 
-const { score, percentage, grade } = calculateScoreAndGrade();
+        const { score, percentage, grade } = calculateScoreAndGrade();
         const Program = document.getElementById('Program').value.trim();
         const Kursus = document.getElementById('Kursus').value.trim();
         const topik = document.getElementById('topik').value.trim();
         const currentDate = new Date().toLocaleDateString('ms-MY');
 
-const data = {
+        const data = {
             Program: Program,
             Kursus: Kursus,
             Topik: topik,
@@ -704,7 +829,9 @@ const data = {
             Tarikh: currentDate
         };
 
-fetch(googleScriptUrl, {
+        console.log("Menghantar data ke Google Sheet:", data); // Debug log
+
+        fetch(googleScriptUrl, {
             method: 'POST',
             mode: 'no-cors', // Penting untuk Google Apps Script
             headers: {
@@ -713,16 +840,18 @@ fetch(googleScriptUrl, {
             body: JSON.stringify(data),
         })
         .then(response => {
+            // With mode: 'no-cors', we cannot reliably check the response.
+            // The browser console will show if the request was blocked by CORS.
+            console.log('Permintaan dihantar ke Google Sheet (no-cors mode).');
             alert('Keputusan telah dihantar ke Google Sheet! (Sila semak Google Sheet anda)');
-            console.log('Data sent to Google Sheet:', data);
         })
         .catch((error) => {
-            console.error('Error:', error);
-            alert('Gagal menghantar keputusan ke Google Sheet. Sila semak URL Google Script anda dan sambungan internet.');
+            console.error('Ralat semasa menghantar ke Google Sheet:', error);
+            alert('Gagal menghantar keputusan ke Google Sheet. Sila semak URL Google Script anda, konfigurasi Web App, dan sambungan internet.');
         });
     }
 
-// Initialize tab display on load
+    // Initialize tab display on load
     document.addEventListener('DOMContentLoaded', () => {
         switchTab('generator');
     });
