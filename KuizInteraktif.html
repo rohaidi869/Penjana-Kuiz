@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Penjana Prompt & Contoh Kuiz (JSON)</title>
+<title>Penjana Prompt & Contoh Kuiz (Pembetulan Google Sheet)</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 <style>
     body {
@@ -186,7 +186,7 @@
 <body>
 
 <div class="container">
-    <h1>Penjana Prompt & Contoh Kuiz (JSON Format)</h1>
+    <h1>Penjana Prompt & Contoh Kuiz (Pembetulan Google Sheet)</h1>
 
 <!-- Tab Navigation -->
     <div class="tabs">
@@ -332,7 +332,7 @@
 function preloadSounds() {
         // Use fetch to load audio data, then create Audio objects
         // This might help with some CORS issues if the server allows it.
-        fetch('https://freesound.org/data/previews/171/171671_2437358-lq.mp3  ')
+        fetch('https://freesound.org/data/previews/171/171671_2437358-lq.mp3')
             .then(response => response.blob())
             .then(blob => {
                 clickSound = new Audio(URL.createObjectURL(blob));
@@ -340,7 +340,7 @@ function preloadSounds() {
             })
             .catch(e => console.warn("Gagal memuatkan bunyi klik:", e));
 
-fetch('https://freesound.org/data/previews/320/320181_5260875-lq.mp3  ')
+fetch('https://freesound.org/data/previews/320/320181_5260875-lq.mp3')
             .then(response => response.blob())
             .then(blob => {
                 correctSound = new Audio(URL.createObjectURL(blob));
@@ -348,7 +348,7 @@ fetch('https://freesound.org/data/previews/320/320181_5260875-lq.mp3  ')
             })
             .catch(e => console.warn("Gagal memuatkan bunyi betul:", e));
 
-fetch('https://freesound.org/data/previews/256/256113_3263906-lq.mp3  ')
+fetch('https://freesound.org/data/previews/256/256113_3263906-lq.mp3')
             .then(response => response.blob())
             .then(blob => {
                 wrongSound = new Audio(URL.createObjectURL(blob));
@@ -366,7 +366,7 @@ fetch('https://freesound.org/data/previews/256/256113_3263906-lq.mp3  ')
             });
         } else {
             // Fallback if preload failed
-            const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3  ');
+            const audio = new Audio('https://freesound.org/data/previews/171/171671_2437358-lq.mp3');
             audio.play().catch((e) => {
                 console.error("Bunyi klik gagal dimainkan (fallback):", e);
             });
@@ -382,7 +382,7 @@ fetch('https://freesound.org/data/previews/256/256113_3263906-lq.mp3  ')
             });
         } else {
             // Fallback if preload failed
-            const audio = new Audio('https://freesound.org/data/previews/320/320181_5260875-lq.mp3  ');
+            const audio = new Audio('https://freesound.org/data/previews/320/320181_5260875-lq.mp3');
             audio.play().catch((e) => {
                  console.error("Bunyi betul gagal dimainkan (fallback):", e);
             });
@@ -398,7 +398,7 @@ fetch('https://freesound.org/data/previews/256/256113_3263906-lq.mp3  ')
             });
         } else {
             // Fallback if preload failed
-            const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3  ');
+            const audio = new Audio('https://freesound.org/data/previews/256/256113_3263906-lq.mp3');
             audio.play().catch((e) => {
                  console.error("Bunyi salah gagal dimainkan (fallback):", e);
             });
@@ -509,7 +509,7 @@ fetch('https://freesound.org/data/previews/256/256113_3263906-lq.mp3  ')
                     "Program",
                     "Kursus",
                     "Topik",
-                    "Nama Pelajar",
+                    "NamaPelajar",
                     "Skor",
                     "Gred",
                     "Tarikh"
@@ -816,38 +816,61 @@ const { score, percentage, grade } = calculateScoreAndGrade();
         const Kursus = document.getElementById('Kursus').value.trim();
         const topik = document.getElementById('topik').value.trim();
         const currentDate = new Date().toLocaleDateString('ms-MY');
+        const jumlahSoalan = quizData.length;
 
-const data = {
-            Program: Program,
-            Kursus: Kursus,
+console.log("Menghantar data ke Google Sheet:");
+        console.log({
+            Program,
+            Kursus,
             Topik: topik,
             NamaPelajar: studentName,
             Skor: score,
-            JumlahSoalan: quizData.length,
+            JumlahSoalan: jumlahSoalan,
             Peratus: percentage.toFixed(2),
             Gred: grade,
             Tarikh: currentDate
-        };
+        });
 
-console.log("Menghantar data ke Google Sheet:", data); // Debug log
+// Gunakan FormData untuk menghantar data
+        const formData = new FormData();
+        formData.append('Program', Program);
+        formData.append('Kursus', Kursus);
+        formData.append('Topik', topik);
+        formData.append('NamaPelajar', studentName);
+        formData.append('Skor', score);
+        formData.append('JumlahSoalan', jumlahSoalan);
+        formData.append('Peratus', percentage.toFixed(2));
+        formData.append('Gred', grade);
+        formData.append('Tarikh', currentDate);
 
-fetch(googleScriptUrl, {
+// Hantar data menggunakan fetch
+        fetch(googleScriptUrl, {
             method: 'POST',
-            mode: 'no-cors', // Penting untuk Google Apps Script
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+            mode: 'cors',
+            body: formData
         })
         .then(response => {
-            // With mode: 'no-cors', we cannot reliably check the response.
-            // The browser console will show if the request was blocked by CORS.
-            console.log('Permintaan dihantar ke Google Sheet (no-cors mode).');
-            alert('Keputusan telah dihantar ke Google Sheet! (Sila semak Google Sheet anda)');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(text => {
+            console.log('Response dari Google Apps Script:', text);
+            try {
+                const result = JSON.parse(text);
+                if (result.status === 'success') {
+                    alert('Keputusan telah dihantar ke Google Sheet!');
+                } else {
+                    alert(`Gagal menghantar keputusan: ${result.message}`);
+                }
+            } catch (e) {
+                alert('Keputusan dihantar tetapi respons tidak dapat diproses. Sila semak Google Sheet anda.');
+            }
         })
         .catch((error) => {
             console.error('Ralat semasa menghantar ke Google Sheet:', error);
-            alert('Gagal menghantar keputusan ke Google Sheet. Sila semak URL Google Script anda, konfigurasi Web App, dan sambungan internet.');
+            alert(`Gagal menghantar keputusan ke Google Sheet. Ralat: ${error.message}`);
         });
     }
 
